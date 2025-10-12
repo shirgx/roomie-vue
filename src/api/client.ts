@@ -1,4 +1,4 @@
-export const API_URL = import.meta.env.VITE_API_URL || 'roomie-vue-production.up.railway.app';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export function getInitData(): string | null {
     const isInTelegram = typeof window !== 'undefined' && (window as any).Telegram?.WebApp
@@ -71,19 +71,38 @@ export async function uploadFile(endpoint: string, file: File): Promise<any> {
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const headers = new Headers(init.headers || {});
-    headers.set("Content-Type", "application/json");
+    
+    // Set Content-Type only for requests with body
+    if (init.body && typeof init.body === 'string') {
+        headers.set("Content-Type", "application/json");
+    }
     
     const initData = getInitData()
     if (initData) {
         headers.set("Authorization", `tma ${initData}`)
+    } else if (import.meta.env.DEV) {
+        // Use mock authorization for development
+        headers.set("Authorization", `mock`)
     }
 
-    const res = await fetch(`${API_URL}${path}`, { ...init, headers });
+    const fullUrl = `${API_URL}/api${path}`;
+    const res = await fetch(fullUrl, { ...init, headers });
+    
     if (!res.ok) {
-        const msg = await res.text();
-        throw new Error(`${res.status} ${msg}`);
+        let errorMessage;
+        try {
+            const errorData = await res.json();
+            errorMessage = errorData.message || errorData.error || `HTTP ${res.status}`;
+        } catch {
+            errorMessage = await res.text() || `HTTP ${res.status}`;
+        }
+        throw new Error(errorMessage);
     }
-    return res.json();
+    
+    const data = await res.json();
+    
+    // Return the data field if it exists (new API format), otherwise return the whole response
+    return data.success ? data.data : data;
 }
 
 export const api = {
@@ -92,8 +111,6 @@ export const api = {
         request<T>(path, { method: "POST", body: JSON.stringify(body ?? {}) }),
     put: <T>(path: string, body?: unknown) =>
         request<T>(path, { method: "PUT", body: JSON.stringify(body ?? {}) }),
-    patch: <T>(path: string, body?: unknown) =>
-        request<T>(path, { method: "PATCH", body: JSON.stringify(body ?? {}) }),
     delete: <T>(path: string) =>
         request<T>(path, { method: "DELETE" }),
 };

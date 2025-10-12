@@ -12,7 +12,7 @@ export async function checkAuth(): Promise<boolean> {
 
 export function isAuthenticated(): boolean {
   const initData = getInitData()
-  return initData !== null
+  return initData !== null || import.meta.env.DEV
 }
 
 export function getTelegramUser() {
@@ -25,16 +25,23 @@ export function getTelegramUser() {
     console.log('Failed to get Telegram user:', error)
   }
   
-  const initData = getInitData()
-  if (initData && initData.includes('mock_hash_for_development')) {
+  // Return mock user for development
+  if (import.meta.env.DEV) {
     return {
-      id: 999999,
-      first_name: 'Test',
-      last_name: 'User',
-      username: 'testuser'
+      id: 999999999,
+      first_name: 'Тестовый',
+      last_name: 'Пользователь',
+      username: 'test_user'
     }
   }
   
+  return null
+}
+
+export function getTelegramWebApp() {
+  if (typeof window !== 'undefined' && (window as any).Telegram?.WebApp) {
+    return (window as any).Telegram.WebApp
+  }
   return null
 }
 

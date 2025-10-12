@@ -209,19 +209,14 @@ const resultTitle = ref('')
 const resultMessage = ref('')
 
 function getUserPhoto(user: UserProfile) {
-  if (user.local_photo_path) {
-    return `${API_URL}/uploads/${user.local_photo_path}`
-  }
-  return user.photo_url || undefined
+  return user.photoUrl || undefined
 }
 
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('ru-RU', {
     day: '2-digit',
     month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+    year: 'numeric'
   })
 }
 

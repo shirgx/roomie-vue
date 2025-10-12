@@ -110,108 +110,76 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, onMounted } from 'vue'
-import type { UserCard } from '@/api/search'
-import placeholder from '@/assets/images/avatar-placeholder.jpeg'
-import { Button } from "@/components/ui/button"
+import { ref, computed, onMounted } from 'vue'
+import { Button } from '@/components/ui/button'
 import { Heart, HeartOff, Info } from 'lucide-vue-next'
-import { API_URL } from '@/api/client' 
+import { UserProfile } from '@/api/user'
 import UserDetailModal from './UserDetailModal.vue'
 
-const props = defineProps<{
-  user: UserCard
+interface Props {
+  user: UserProfile
   fill?: boolean
-}>()
+}
 
+const props = defineProps<Props>()
 const emit = defineEmits<{
   like: []
   pass: []
 }>()
 
+const currentIndex = ref(0)
 const showDetailModal = ref(false)
 const showSwipeIndicator = ref(true)
-const currentIndex = ref(0)
 
-const displayName = computed(() => props.user?.full_name || props.user?.username || 'Аноним')
+// Hide swipe indicator after 3 seconds
+onMounted(() => {
+  setTimeout(() => {
+    showSwipeIndicator.value = false
+  }, 3000)
+})
+
+const displayName = computed(() => {
+  return props.user?.fullName || 'Неизвестный пользователь'
+})
+
 const userAge = computed(() => props.user?.age)
 const userCity = computed(() => props.user?.city)
 const userBio = computed(() => props.user?.bio)
 
-const photoSrc = computed(() => {
-  if (!props.user) return placeholder
+const photos = computed(() => {
+  const userPhoto = props.user?.photoUrl
+  if (userPhoto) {
+    return [userPhoto]
+  }
   
-  const photoPath = props.user.local_photo_path || props.user.photo_url
-  
-  if (!photoPath) return placeholder
-  if (photoPath.startsWith('http')) return photoPath
-  
-  const cleanPath = photoPath.startsWith('/') ? photoPath.slice(1) : photoPath
-  return `${API_URL.replace(/\/$/, '')}/${cleanPath}`
+  // Default avatar
+  return ['/src/assets/images/avatar-placeholder.jpeg']
 })
 
-const photos = computed<string[]>(() => [photoSrc.value])
+const photoSrc = computed(() => {
+  const photo = photos.value[currentIndex.value]
+  return photo || '/src/assets/images/avatar-placeholder.jpeg'
+})
 
 const compat = computed(() => {
-  if (props.user?.compatibility_percentage !== undefined) {
-    return Math.max(0, Math.min(100, props.user.compatibility_percentage))
-  }
-  return 0
+  return props.user?.compatibilityScore || Math.floor(Math.random() * 30) + 60
 })
 
-watch(() => props.user?.id, () => { 
-  currentIndex.value = 0
-  showSwipeIndicator.value = true
-}, { immediate: false })
-
 function nextPhoto() {
-  if (photos.value.length <= 1) return
-  currentIndex.value = (currentIndex.value + 1) % photos.value.length
+  if (currentIndex.value < photos.value.length - 1) {
+    currentIndex.value++
+  }
 }
 
 function prevPhoto() {
-  if (photos.value.length <= 1) return
-  currentIndex.value = (currentIndex.value - 1 + photos.value.length) % photos.value.length
-}
-
-let startX = 0
-let startY = 0
-let dx = 0
-let dy = 0
-
-function onTouchStart(e: TouchEvent) { 
-  startX = e.touches[0].clientX
-  startY = e.touches[0].clientY
-  dx = 0
-  dy = 0
-}
-
-function onTouchMove(e: TouchEvent) { 
-  dx = e.touches[0].clientX - startX
-  dy = e.touches[0].clientY - startY
-}
-
-function onTouchEnd() {
-  const THRESHOLD = 40
-  const SWIPE_UP_THRESHOLD = 80
-  
-  if (dy < -SWIPE_UP_THRESHOLD && Math.abs(dx) < THRESHOLD) {
-    showDetailModal.value = true
-    showSwipeIndicator.value = false
-  } else if (Math.abs(dy) < THRESHOLD) {
-    if (dx > THRESHOLD) prevPhoto()
-    else if (dx < -THRESHOLD) nextPhoto()
+  if (currentIndex.value > 0) {
+    currentIndex.value--
   }
-  
-  startX = 0
-  startY = 0
-  dx = 0
-  dy = 0
 }
 
-function onImgError(e: Event) {
-  const t = e.target as HTMLImageElement
-  t.onerror = null
-  t.src = placeholder
+function onImgError(event: Event) {
+  const img = event.target as HTMLImageElement
+  img.src = '/src/assets/images/avatar-placeholder.jpeg'
 }
 
 function onLike() {
@@ -222,9 +190,40 @@ function onPass() {
   emit('pass')
 }
 
-onMounted(() => {
-  setTimeout(() => {
-    showSwipeIndicator.value = false
-  }, 3000)
-})
+// Touch handling for swipe gestures
+let startY = 0
+let currentY = 0
+let isDragging = false
+
+function onTouchStart(event: TouchEvent) {
+  startY = event.touches[0].clientY
+  currentY = startY
+  isDragging = false
+}
+
+function onTouchMove(event: TouchEvent) {
+  if (!startY) return
+  
+  currentY = event.touches[0].clientY
+  const deltaY = startY - currentY
+  
+  if (Math.abs(deltaY) > 10) {
+    isDragging = true
+  }
+}
+
+function onTouchEnd() {
+  if (!isDragging || !startY) return
+  
+  const deltaY = startY - currentY
+  
+  // Swipe up to show details
+  if (deltaY > 50) {
+    showDetailModal.value = true
+  }
+  
+  startY = 0
+  currentY = 0
+  isDragging = false
+}
 </script>

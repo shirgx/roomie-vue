@@ -32,13 +32,16 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, onActivated, watch } from 'vue'
-import { findUsers, type UserCard } from '@/api/search'
+import { getPotentialMatches } from '@/api/search'
 import { sendLike } from '@/api/likes'
+import { UserProfile } from '@/api/user'
 import SwipeCard from '@/components/SwipeCard.vue'
 import { useHeader } from '@/stores/ui'
+import { useUserStore } from '@/stores/user'
 
 const headerStore = useHeader()
-const queue = ref<UserCard[]>([])
+const userStore = useUserStore()
+const queue = ref<UserProfile[]>([])
 const idx = ref(0)
 const isLoading = ref(false)
 
@@ -58,14 +61,29 @@ async function loadFeed() {
   
   isLoading.value = true
   try {
-    const filters = headerStore.getFilters() || {}
-    const users = await findUsers(filters)
-    
+    // Check if user is authenticated and profile is complete
+    if (!userStore.isAuthenticated) {
+      await userStore.checkAuthentication()
+      if (!userStore.isAuthenticated) {
+        return
+      }
+    }
+
+    // Check if test is completed
+    if (!userStore.hasCompletedTest) {
+      window.location.hash = '#/test'
+      return
+    }
+
+    // Load potential matches
+    const users = await getPotentialMatches(20)
     queue.value = Array.isArray(users) ? users : []
     idx.value = 0
   } catch (e: any) {
-    if (e?.message && e.message.includes('403')) {
-      window.location.hash = '#/basedtest'
+    console.error('Error loading feed:', e)
+    
+    if (e?.message && (e.message.includes('403') || e.message.includes('TEST_NOT_COMPLETED'))) {
+      window.location.hash = '#/test'
       return
     }
     
@@ -76,7 +94,13 @@ async function loadFeed() {
   }
 }
 
-onMounted(loadFeed)
+onMounted(async () => {
+  if (!userStore.user) {
+    await userStore.fetchUser()
+  }
+  loadFeed()
+})
+
 onActivated(loadFeed)
 
 async function likeTop() {
@@ -84,7 +108,14 @@ async function likeTop() {
   if (!user?.id) return
   
   try {
-    await sendLike(user.id, true)
+    const result = await sendLike(user.id, true)
+    
+    // Show match notification if there's a match
+    if (result.isMatch && result.match) {
+      // You could show a match modal here
+      console.log('New match!', result.match)
+    }
+    
     idx.value++
   } catch (error) {
     console.error('Error sending like:', error)

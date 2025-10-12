@@ -33,12 +33,12 @@
             @update:model-value="val => handleAnswerChange(q.id, val)"
         >
           <div
-              v-for="(ans, idx) in q.answers"
+              v-for="(option, idx) in q.options"
               :key="idx"
               class="flex items-center space-x-4"
           >
             <RadioGroupItem :id="`${q.id}-${idx}`" :value="String(idx)" class="w-5 h-5" />
-            <label :for="`${q.id}-${idx}`" class="text-sm text-foreground cursor-pointer">{{ ans.text }}</label>
+            <label :for="`${q.id}-${idx}`" class="text-sm text-foreground cursor-pointer">{{ option }}</label>
           </div>
         </RadioGroup>
       </div>
@@ -136,7 +136,7 @@ import { ref, onMounted, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
-import { fetchQuestions, submitAnswers, type Question } from '@/api/test'
+import { getTestQuestions, submitCompleteTest, type TestQuestion } from '@/api/test'
 import { api } from '@/api/client'
 import {
   AlertDialog,
@@ -149,8 +149,8 @@ import {
 } from '@/components/ui/alert-dialog'
 
 const router = useRouter()
-const questions = ref<Question[]>([])
-const picked = reactive<Record<number, number>>({})
+const questions = ref<TestQuestion[]>([])
+const picked = reactive<Record<string, number>>({})
 const isLoading = ref(true)
 const isSaving = ref(false)
 
@@ -170,7 +170,7 @@ const allQuestionsAnswered = computed(() => {
   return questions.value.length > 0 && answeredCount.value === questions.value.length
 })
 
-function handleAnswerChange(questionId: number, value: string) {
+function handleAnswerChange(questionId: string, value: string) {
   const numValue = Number(value)
   if (!isNaN(numValue)) {
     picked[questionId] = numValue
@@ -192,13 +192,18 @@ function handleSuccessClose() {
 
 onMounted(async () => {
   try {
-    questions.value = await fetchQuestions()
+    questions.value = await getTestQuestions()
     
+    // Try to load existing answers from new API
     try {
-      const existingAnswers = await api.get('/tests/my-answers') as Record<string, number>
-      Object.entries(existingAnswers).forEach(([questionId, answerIndex]) => {
-        picked[Number(questionId)] = answerIndex
-      })
+      const userAnswers = await api.get('/test/answers')
+      if (userAnswers.answers) {
+        userAnswers.answers.forEach((answer: any) => {
+          if (answer.answers && answer.answers.length > 0) {
+            picked[answer.questionId] = answer.answers[0]
+          }
+        })
+      }
     } catch (error) {
       console.log('No existing answers found or error loading them:', error)
     }
@@ -214,11 +219,13 @@ onMounted(async () => {
 async function save() {
   isSaving.value = true
   try {
-    const pairs = Object.entries(picked).map(([qId, answerIdx]) => {
-      return [Number(qId), Number(answerIdx)] as [number, number]
-    })
+    // Convert picked answers to new API format
+    const answers = Object.entries(picked).map(([questionId, answerIndex]) => ({
+      questionId,
+      answers: [answerIndex]
+    }))
     
-    const result = await submitAnswers(pairs)
+    const result = await submitCompleteTest(answers)
     console.log('Test submitted successfully:', result)
     
     window.dispatchEvent(new CustomEvent('testCompleted'))
