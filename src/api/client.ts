@@ -1,4 +1,4 @@
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+export const API_URL = import.meta.env.VITE_API_URL || 'roomie-vue-production.up.railway.app';
 
 export function getInitData(): string | null {
     const isInTelegram = typeof window !== 'undefined' && (window as any).Telegram?.WebApp
