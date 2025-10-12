@@ -3,7 +3,8 @@ import express from 'express'
 import cors from 'cors'
 import path from 'node:path'
 import multer from 'multer'
-import { validate, parse, type InitData } from '@tma.js/init-data-node'
+import { validate, parse } from '@telegram-apps/init-data-node'
+import type { InitDataParsed } from '@telegram-apps/init-data-node'
 import { db, type DBUser } from './db.js'
 
 const app = express()
@@ -36,7 +37,7 @@ const upload = multer({
 })
 
 interface AuthResult {
-  initData?: InitData
+  initData?: InitDataParsed
   isValid: boolean
   error?: string
 }
@@ -53,13 +54,13 @@ function authenticateRequest(req: express.Request): AuthResult {
         initData: {
           user: {
             id: 999999,
-            first_name: 'Test',
-            last_name: 'User',
+            firstName: 'Test',
+            lastName: 'User',
             username: 'testuser'
           },
-          auth_date: new Date(),
+          authDate: new Date(),
           hash: 'mock_hash'
-        } as InitData,
+        } as InitDataParsed,
         isValid: true
       }
     }
@@ -114,7 +115,7 @@ function getUserByTgId(tg_id: number): DBUser | undefined {
   return db.prepare('SELECT * FROM users WHERE tg_id = ?').get(tg_id) as any
 }
 
-function ensureUserByTgId(initData: InitData): DBUser {
+function ensureUserByTgId(initData: InitDataParsed): DBUser {
   const tgId = initData.user?.id
   if (!tgId) {
     throw new Error('No user ID in init data')
@@ -127,10 +128,10 @@ function ensureUserByTgId(initData: InitData): DBUser {
   
   if (initData.user) {
     if (initData.user.username) userData.username = initData.user.username
-    if (initData.user.first_name || initData.user.last_name) {
-      userData.full_name = [initData.user.first_name, initData.user.last_name].filter(Boolean).join(' ')
+    if (initData.user.firstName || initData.user.lastName) {
+      userData.full_name = [initData.user.firstName, initData.user.lastName].filter(Boolean).join(' ')
     }
-    if (initData.user.photo_url) userData.photo_url = initData.user.photo_url
+    if (initData.user.photoUrl) userData.photo_url = initData.user.photoUrl
   }
   
   if (tgId === 999999) {

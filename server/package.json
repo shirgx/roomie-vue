@@ -14,7 +14,8 @@
     "restart": "heroku restart"
   },
   "dependencies": {
-    "@tma.js/init-data-node": "^2.0.1",
+    "@telegram-apps/init-data-node": "^1.0.0",
+    "@telegram-apps/sdk": "^3.11.8",
     "@types/multer": "^2.0.0",
     "better-sqlite3": "^9.6.0",
     "cors": "^2.8.5",
