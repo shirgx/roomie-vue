@@ -1,0 +1,4 @@
+cd /Users/osmanshirgalin/WebstormProjects/roomie-vue/server && rm -f app.db app.db-shm app.db-wal 
+cd /Users/osmanshirgalin/WebstormProjects/roomie-vue/server && node add-questions.js     
+cd /Users/osmanshirgalin/WebstormProjects/roomie-vue/server && node add-mock-users.js            
+cd /Users/osmanshirgalin/WebstormProjects/roomie-vue/server && node add-mock-test-answers.js   
