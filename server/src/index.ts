@@ -644,7 +644,7 @@ app.delete('/admin/users/:id', (req, res) => {
   }
   
   const adminId = parseInt(process.env.ADMIN_TG_ID || '0')
-  if (!adminId || auth.initData.user.id !== adminId) {
+  if (!adminId || !auth.initData.user || auth.initData.user.id !== adminId) {
     return res.status(403).json({ error: 'admin access required' })
   }
 
@@ -675,7 +675,7 @@ app.get('/admin/stats', (req, res) => {
   }
   
   const adminId = parseInt(process.env.ADMIN_TG_ID || '0')
-  if (!adminId || auth.initData.user.id !== adminId) {
+  if (!adminId || !auth.initData.user || auth.initData.user.id !== adminId) {
     return res.status(403).json({ error: 'admin access required' })
   }
 
@@ -733,7 +733,7 @@ app.delete('/admin/users/:id/test', (req, res) => {
   }
 
   const adminId = parseInt(process.env.ADMIN_TG_ID || '0')
-  if (!adminId || auth.initData.user.id !== adminId) {
+  if (!adminId || !auth.initData.user || auth.initData.user.id !== adminId) {
     return res.status(403).json({ error: 'admin access required' })
   }
 
@@ -966,7 +966,7 @@ app.post('/admin/reset-mocks', (req, res) => {
   }
   
   const adminId = parseInt(process.env.ADMIN_TG_ID || '0')
-  if (!adminId || auth.initData.user.id !== adminId) {
+  if (!adminId || !auth.initData.user || auth.initData.user.id !== adminId) {
     return res.status(403).json({ error: 'admin access required' })
   }
   
