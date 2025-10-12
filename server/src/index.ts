@@ -778,9 +778,20 @@ app.delete('/users/me/test', (req, res) => {
 
 app.get('/health', (_req, res) => res.json({ ok: true }))
 
-const PORT = Number(process.env.PORT || 3000)
-app.listen(PORT, () => {
-  console.log(`API listening on http://localhost:${PORT}`)
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Roomie API Server',
+    status: 'running',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      auth: '/users/me',
+      search: '/search/',
+      tests: '/tests/questions',
+      likes: '/likes/',
+      uploads: '/uploads'
+    }
+  })
 })
 
 function calculateCompatibility(user1Id: number, user2Id: number): number {
@@ -990,4 +1001,11 @@ app.post('/admin/reset-mocks', (req, res) => {
   } catch (e: any) {
     res.status(500).json({ error: e?.message || 'failed' })
   }
+})
+
+const PORT = Number(process.env.PORT || 3000)
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+  console.log(`Health check: http://localhost:${PORT}/health`)
+  console.log(`API root: http://localhost:${PORT}/`)
 })
