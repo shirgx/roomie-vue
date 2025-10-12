@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
   budget_min INTEGER,
   budget_max INTEGER,
   bio TEXT,
+  apartment_description TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS likes (
@@ -42,31 +43,34 @@ CREATE TABLE IF NOT EXISTS test_answers (
 );
 `)
 
+// Add columns if they don't exist (for backward compatibility)
 try {
   db.exec('ALTER TABLE users ADD COLUMN district TEXT')
 } catch (error) {
+  // Column already exists
 }
 
 try {
   db.exec('ALTER TABLE users ADD COLUMN apartment_description TEXT')
 } catch (error) {
+  // Column already exists
 }
 
-export type DBUser = {
+export interface DBUser {
   id: number
   tg_id: number
-  username?: string | null
-  full_name?: string | null
-  photo_url?: string | null
-  local_photo_path?: string | null
-  has_apartment?: number | null
-  city?: string | null
-  district?: string | null
-  age?: number | null
-  gender?: string | null
-  budget_min?: number | null
-  budget_max?: number | null
-  bio?: string | null
-  apartment_description?: string | null
+  username?: string
+  full_name?: string
+  photo_url?: string
+  local_photo_path?: string
+  has_apartment: number
+  city?: string
+  district?: string
+  age?: number
+  gender?: string
+  budget_min?: number
+  budget_max?: number
+  bio?: string
+  apartment_description?: string
   created_at: string
 }

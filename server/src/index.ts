@@ -168,7 +168,7 @@ app.get('/users/me', (req, res) => {
   const answeredQuestions = (db.prepare('SELECT COUNT(*) AS c FROM test_answers WHERE user_id = ?').get(user.id) as any).c
   const testCompleted = totalQuestions > 0 && answeredQuestions >= totalQuestions
   
-  res.json({ 
+  return res.json({ 
     ...user, 
     auth: true,
     testCompleted: testCompleted
@@ -248,7 +248,7 @@ app.put('/users/me', (req, res) => {
   }
 
   const updatedUser = getUserByTgId(me.tg_id)!
-  res.json({ ...updatedUser, auth: true })
+  return res.json({ ...updatedUser, auth: true })
 })
 
 app.post('/users/avatar', upload.single('avatar'), (req, res) => {
@@ -267,7 +267,7 @@ app.post('/users/avatar', upload.single('avatar'), (req, res) => {
   const photoPath = req.file.filename
   db.prepare('UPDATE users SET local_photo_path = ? WHERE id = ?').run(photoPath, me.id)
 
-  res.json({
+  return res.json({
     status: 'ok',
     photo_path: photoPath,
     photo_url: `/uploads/${photoPath}`
@@ -372,7 +372,7 @@ app.post('/search/', (req, res) => {
   
   const data = usersWithCompatibility.slice(0, 50)
   
-  res.json(data)
+  return res.json(data)
 })
 
 app.post('/likes/', (req, res) => {
@@ -388,7 +388,7 @@ app.post('/likes/', (req, res) => {
   if (!Number.isFinite(to_user_id)) return res.status(400).send('bad to_user_id')
   db.prepare('INSERT OR REPLACE INTO likes (from_user_id, to_user_id, is_like) VALUES (?, ?, ?)')
     .run(me.id, to_user_id, is_like ? 1 : 0)
-  res.json({ status: 'ok' })
+  return res.json({ status: 'ok' })
 })
 
 app.get('/tests/questions', (req, res) => {
@@ -399,7 +399,7 @@ app.get('/tests/questions', (req, res) => {
     type: r.type,
     answers: (JSON.parse(r.answers_json) as string[]).map((text, idx) => ({ id: idx, text })),
   }))
-  res.json(data)
+  return res.json(data)
 })
 
 app.post('/tests/submit', (req, res) => {
@@ -445,8 +445,9 @@ app.post('/tests/submit', (req, res) => {
   tx()
   
   console.log(`Total answers inserted: ${insertedCount}`)
-  res.json({ status: 'ok', inserted: insertedCount })
+  return res.json({ status: 'ok', inserted: insertedCount })
 })
+
 app.get('/tests/status', (req, res) => {
   const auth = authenticateRequest(req)
   
@@ -459,7 +460,7 @@ app.get('/tests/status', (req, res) => {
   const totalQuestions = (db.prepare('SELECT COUNT(*) AS c FROM test_questions').get() as any).c
   const answeredQuestions = (db.prepare('SELECT COUNT(*) AS c FROM test_answers WHERE user_id = ?').get(user.id) as any).c
   
-  res.json({
+  return res.json({
     questionCount: totalQuestions,
     answeredCount: answeredQuestions,
     isCompleted: totalQuestions > 0 && answeredQuestions >= totalQuestions
@@ -487,7 +488,7 @@ app.get('/tests/my-answers', (req, res) => {
     return acc
   }, {} as Record<number, number>)
 
-  res.json(answersMap)
+  return res.json(answersMap)
 })
 
 app.get('/likes/matches', (req, res) => {
@@ -524,7 +525,7 @@ app.get('/likes/matches', (req, res) => {
     compatibility_percentage: calculateCompatibility(me.id, m.id)
   }))
 
-  res.json(data)
+  return res.json(data)
 })
 
 app.get('/likes/sent', (req, res) => {
@@ -561,7 +562,7 @@ app.get('/likes/sent', (req, res) => {
     created_at: l.created_at
   }))
 
-  res.json(data)
+  return res.json(data)
 })
 
 app.get('/likes/received', (req, res) => {
@@ -597,7 +598,7 @@ app.get('/likes/received', (req, res) => {
     created_at: l.created_at
   }))
 
-  res.json(data)
+  return res.json(data)
 })
 
 app.get('/users/:id', (req, res) => {
@@ -634,7 +635,7 @@ app.get('/users/:id', (req, res) => {
     apartment_description: user.apartment_description || undefined,
   }
 
-  res.json(data)
+  return res.json(data)
 })
 
 app.delete('/admin/users/:id', (req, res) => {
@@ -665,7 +666,7 @@ app.delete('/admin/users/:id', (req, res) => {
   })
   tx()
 
-  res.json({ status: 'deleted' })
+  return res.json({ status: 'deleted' })
 })
 
 app.get('/admin/stats', (req, res) => {
@@ -715,7 +716,7 @@ app.get('/admin/stats', (req, res) => {
     LIMIT 5
   `).all() as any[]
 
-  res.json({
+  return res.json({
     totalUsers,
     activeUsers: totalUsers,
     testCompletedUsers,
@@ -744,7 +745,7 @@ app.delete('/admin/users/:id/test', (req, res) => {
   }
 
   db.prepare('DELETE FROM test_answers WHERE user_id = ?').run(userId)
-  res.json({ status: 'test reset' })
+  return res.json({ status: 'test reset' })
 })
 
 app.delete('/users/me', (req, res) => {
@@ -760,7 +761,7 @@ app.delete('/users/me', (req, res) => {
   db.prepare('DELETE FROM likes WHERE from_user_id = ? OR to_user_id = ?').run(me.id, me.id)
   db.prepare('DELETE FROM users WHERE id = ?').run(me.id)
 
-  res.json({ status: 'account deleted' })
+  return res.json({ status: 'account deleted' })
 })
 
 app.delete('/users/me/test', (req, res) => {
@@ -773,13 +774,13 @@ app.delete('/users/me/test', (req, res) => {
   const me = ensureUserByTgId(auth.initData)
 
   db.prepare('DELETE FROM test_answers WHERE user_id = ?').run(me.id)
-  res.json({ status: 'test reset' })
+  return res.json({ status: 'test reset' })
 })
 
 app.get('/health', (_req, res) => res.json({ ok: true }))
 
 app.get('/', (req, res) => {
-  res.json({
+  return res.json({
     message: 'Roomie API Server',
     status: 'running',
     version: '1.0.0',
@@ -935,7 +936,7 @@ app.get('/users/:id/compatibility', (req, res) => {
   }
 
   const compatibility = calculateCompatibility(me.id, userId)
-  res.json({ 
+  return res.json({ 
     user_id: userId,
     compatibility_percentage: compatibility 
   })
@@ -997,9 +998,9 @@ app.post('/admin/reset-mocks', (req, res) => {
 
   try {
     const result = resetToMockUsers()
-    res.json({ status: 'ok', ...result })
+    return res.json({ status: 'ok', ...result })
   } catch (e: any) {
-    res.status(500).json({ error: e?.message || 'failed' })
+    return res.status(500).json({ error: e?.message || 'failed' })
   }
 })
 
