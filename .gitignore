@@ -86,9 +86,6 @@ dist
 
 # Gatsby files
 .cache/
-# Comment in the public line in if your project uses Gatsby and not Next.js
-# https://nextjs.org/blog/next-9-1#public-directory-support
-# public
 
 # vuepress build output
 .vuepress/dist
@@ -122,23 +119,22 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# Vite
-dist/
-dist-ssr/
-*.local
-
-# Vue.js
-*.tgz
-
-# Editor directories and files
-.vscode/
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
 !.vscode/extensions.json
-.idea/
-*.swp
-*.swo
-*~
+.history
 
-# OS generated files
+# IDE - IntelliJ / WebStorm
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# OS files
 .DS_Store
 .DS_Store?
 ._*
@@ -146,72 +142,40 @@ dist-ssr/
 .Trashes
 ehthumbs.db
 Thumbs.db
+*~
+
+# Build output
+dist/
+dist-ssr/
+*.local
 
 # Database files
 *.db
-*.db-shm
-*.db-wal
 *.sqlite
 *.sqlite3
+identifier.sqlite
+app.db
 
-# Uploads and user content
+# Uploads directory (user uploaded files)
+server/uploads/
 uploads/
-!uploads/.gitkeep
 
-# Build outputs
-build/
-dist/
-out/
-
-# PM2
-.pm2/
-ecosystem.config.js
-
-# Docker
-.dockerignore
-
-# Deployment
-.vercel
-.netlify
-.firebase/
-
-# Test coverage
-coverage/
+# PM2 logs
+server/server.log
+*.log
 
 # Temporary files
 tmp/
 temp/
+*.tmp
+*.swp
+*.swo
 
-# Lock files (keep yarn.lock or package-lock.json, not both)
-# Uncomment the one you DON'T use:
-# yarn.lock
+# Test files
+coverage/
+.nyc_output/
+
+# Lock files (optional - uncomment if you want to ignore them)
 # package-lock.json
-
-# IDE
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Local configuration
-config/local.json
-local.json
-
-# Certificate files
-*.pem
-*.key
-*.crt
-
-# Backup files
-*.backup
-*.bak
-
-# Archive files
-*.zip
-*.tar.gz
-*.rar
-
-# Development helpers
-.env.example
-!.env.example
+# yarn.lock
+# pnpm-lock.yaml
