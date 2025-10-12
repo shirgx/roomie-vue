@@ -3,7 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import path from 'node:path'
 import multer from 'multer'
-import { validate, parse, type InitData } from '@telegram-apps/init-data-node'
+import { validate, parse, type InitData } from '@tma.js/init-data-node'
 import { db, type DBUser } from './db.js'
 
 const app = express()
