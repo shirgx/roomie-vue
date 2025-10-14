@@ -58,8 +58,11 @@ function go(path: string) {
       
       <button v-if="onSwipe" 
               :aria-label="header.filtersOpen ? 'Закрыть фильтры' : 'Открыть фильтры'"
-              @click="header.toggleFilters()">
+              @click="header.toggleFilters()"
+              class="relative">
         <component :is="header.filtersOpen ? X : SlidersHorizontal" :size="24" />
+        <span v-if="header.hasActiveFilters"
+              class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-primary animate-pulse"></span>
       </button>
       
       <button aria-label="Настройки" @click="go('/settings')">

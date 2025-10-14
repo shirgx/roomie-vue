@@ -1,108 +1,17 @@
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-export function getInitData(): string | null {
-    const isInTelegram = typeof window !== 'undefined' && (window as any).Telegram?.WebApp
-    
-    if (isInTelegram) {
-        try {
-            const tg = (window as any).Telegram.WebApp
-            if (tg.initData) {
-                console.log('Found Telegram initData using WebApp API')
-                console.log('InitData length:', tg.initData.length)
-                return tg.initData
-            } else {
-                console.log('Telegram WebApp available but initData is empty')
-                return null 
-            }
-        } catch (error) {
-            console.log('Failed to get init data from Telegram WebApp:', error)
-            return null 
-        }
-    }
-    
-    if (typeof window !== 'undefined' && 
-        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
-        !isInTelegram) {
-        console.log('Creating mock user for local development')
-        
-        const mockUser = {
-            id: 999999,
-            first_name: 'Test',
-            last_name: 'User',
-            username: 'testuser'
-        }
-        
-        const mockData = {
-            user: JSON.stringify(mockUser),
-            auth_date: String(Math.floor(Date.now() / 1000)),
-            hash: 'mock_hash_for_development'
-        }
-        
-        return new URLSearchParams(mockData).toString()
-    }
-    
-    console.log('No initData available and not in development mode')
-    return null
-}
-
-export async function uploadFile(endpoint: string, file: File): Promise<any> {
-    const formData = new FormData()
-    formData.append('avatar', file)
-
-    const headers = new Headers()
-    const initData = getInitData()
-    if (initData) {
-        headers.set('Authorization', `tma ${initData}`)
-    }
-
-    const response = await fetch(`${API_URL}${endpoint}`, {
-        method: 'POST',
-        headers,
-        body: formData
-    })
-
-    if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(`Upload failed: ${errorText}`)
-    }
-
-    return response.json()
-}
-
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+    const tgId = localStorage.getItem("tg_id");
     const headers = new Headers(init.headers || {});
-    
-    // Set Content-Type only for requests with body
-    if (init.body && typeof init.body === 'string') {
-        headers.set("Content-Type", "application/json");
-    }
-    
-    const initData = getInitData()
-    if (initData) {
-        headers.set("Authorization", `tma ${initData}`)
-    } else if (import.meta.env.DEV) {
-        // Use mock authorization for development
-        headers.set("Authorization", `mock`)
-    }
+    headers.set("Content-Type", "application/json");
+    if (tgId) headers.set("X-User-TgId", tgId);
 
-    const fullUrl = `${API_URL}/api${path}`;
-    const res = await fetch(fullUrl, { ...init, headers });
-    
+    const res = await fetch(`${API_URL}${path}`, { ...init, headers });
     if (!res.ok) {
-        let errorMessage;
-        try {
-            const errorData = await res.json();
-            errorMessage = errorData.message || errorData.error || `HTTP ${res.status}`;
-        } catch {
-            errorMessage = await res.text() || `HTTP ${res.status}`;
-        }
-        throw new Error(errorMessage);
+        const msg = await res.text();
+        throw new Error(`${res.status} ${msg}`);
     }
-    
-    const data = await res.json();
-    
-    // Return the data field if it exists (new API format), otherwise return the whole response
-    return data.success ? data.data : data;
+    return res.json();
 }
 
 export const api = {
@@ -111,6 +20,8 @@ export const api = {
         request<T>(path, { method: "POST", body: JSON.stringify(body ?? {}) }),
     put: <T>(path: string, body?: unknown) =>
         request<T>(path, { method: "PUT", body: JSON.stringify(body ?? {}) }),
+    patch: <T>(path: string, body?: unknown) =>
+        request<T>(path, { method: "PATCH", body: JSON.stringify(body ?? {}) }),
     delete: <T>(path: string) =>
         request<T>(path, { method: "DELETE" }),
 };

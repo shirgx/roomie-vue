@@ -10,10 +10,10 @@
       <TestCard 
         name="Базовый тест на совместимость" 
         text="Мини-тест определяет ваши привычки и ценности, чтобы подобрать соседа с максимально близким стилем жизни"
-        :is-completed="testStatus?.testCompleted"
+        :is-completed="testStatus?.isCompleted"
         :progress="progressPercent"
-        :question-count="testStatus?.total"
-        :answered-count="testStatus?.answered"
+        :question-count="testStatus?.questionCount"
+        :answered-count="testStatus?.answeredCount"
         @click="handleTestCardClick"
         class="cursor-pointer hover:bg-accent/5 transition-colors"
       />
@@ -44,15 +44,15 @@
         <div>
           <h3 class="font-medium">Прогресс тестирования</h3>
           <p class="text-sm text-muted-foreground">
-            {{ testStatus.testCompleted ? 'Все обязательные тесты пройдены!' : 'Пройдите тест для доступа к поиску' }}
+            {{ testStatus.isCompleted ? 'Все обязательные тесты пройдены!' : 'Пройдите тест для доступа к поиску' }}
           </p>
         </div>
         <div class="text-right">
-          <div class="text-2xl font-bold" :class="testStatus.testCompleted ? 'text-green-600' : 'text-yellow-600'">
+          <div class="text-2xl font-bold" :class="testStatus.isCompleted ? 'text-green-600' : 'text-yellow-600'">
             {{ progressPercent }}%
           </div>
           <div class="text-xs text-muted-foreground">
-            {{ testStatus.answered }}/{{ testStatus.total }}
+            {{ testStatus.answeredCount }}/{{ testStatus.questionCount }}
           </div>
         </div>
       </div>
@@ -83,8 +83,7 @@
 import { ref, onMounted, computed, onActivated } from 'vue'
 import { useRouter } from 'vue-router'
 import TestCard from '@/components/TestCard.vue'
-import { getTestProgress, type TestProgress } from '@/api/test'
-import { useUserStore } from '@/stores/user'
+import { getTestStatus, type TestStatus } from '@/api/test'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -97,20 +96,19 @@ import {
 } from '@/components/ui/alert-dialog'
 
 const router = useRouter()
-const userStore = useUserStore()
-const testStatus = ref<TestProgress | null>(null)
+const testStatus = ref<TestStatus | null>(null)
 const isLoading = ref(true)
 const showRetakeDialog = ref(false)
 
 const progressPercent = computed(() => {
-  if (!testStatus.value || testStatus.value.total === 0) return 0
-  return testStatus.value.progress || 0
+  if (!testStatus.value || testStatus.value.questionCount === 0) return 0
+  return Math.round((testStatus.value.answeredCount / testStatus.value.questionCount) * 100)
 })
 
 async function loadTestStatus() {
   try {
     isLoading.value = true
-    testStatus.value = await getTestProgress()
+    testStatus.value = await getTestStatus()
     console.log('Test status loaded:', testStatus.value)
   } catch (error) {
     console.error('Error loading test status:', error)
@@ -121,7 +119,7 @@ async function loadTestStatus() {
 }
 
 function handleTestCardClick() {
-  if (testStatus.value?.testCompleted) {
+  if (testStatus.value?.isCompleted) {
     showRetakeDialog.value = true
   } else {
     goToTest()

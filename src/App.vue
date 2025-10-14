@@ -1,6 +1,6 @@
 <template>
   <div :style="{ backgroundImage: bg }"
-       class="min-h-dvh flex flex-col bg-cover bg-center">
+       class="min-h-dvh flex flex-col bg-cover bg-center bg-no-repeat bg-fixed">
     <AppHeader/>
 
     <main class="absolute inset-x-0 min-h-[calc(100dvh-3.5rem-3.5rem) bottom-[calc(3.5rem+env(safe-area-inset-bottom))] p-6
@@ -47,7 +47,35 @@ import { watch, computed } from 'vue'
 import bgLight from '@/assets/bg/background_light.jpg'
 import bgDark  from '@/assets/bg/background_dark.jpg'
 import { useTheme } from '@/composables/useTheme'
+import { onMounted } from 'vue'
 
+onMounted(async () => {
+  try {
+    const tg = (window as any)?.Telegram?.WebApp
+    
+    if (tg) {
+      console.log('Telegram WebApp detected in App.vue')
+      
+      if (tg.expand) {
+        tg.expand()
+      }
+      
+      if (tg.requestFullscreen) {
+        try {
+          tg.requestFullscreen()
+        } catch (e) {
+          console.warn('Fullscreen request failed:', e)
+        }
+      }
+    } else {
+      console.warn('Telegram WebApp not available in App.vue')
+    }
+  } catch (e) {
+    console.warn('[TMA] init failed:', e)
+  }
+})
+
+// Use background depending on theme
 const { theme } = useTheme()
 const bg = computed(() => `url(${theme.value === 'dark' ? bgDark : bgLight})`)
 

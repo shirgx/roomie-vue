@@ -48,612 +48,299 @@ CREATE TABLE IF NOT EXISTS test_answers (
 );
 `)
 
-const mockUsers = [
-  {
-    tg_id: 1001,
-    username: 'anna_kazan',
-    full_name: 'Анна Петрова',
-    photo_url: 'https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Казань',
-    district: 'Вахитовский',
-    age: 23,
-    gender: 'female',
-    budget_min: 15000,
-    budget_max: 25000,
-    bio: 'Студентка КФУ, изучаю психологию. Ищу соседку для совместной аренды в центре города. Люблю читать, готовить и смотреть фильмы.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1002,
-    username: 'dmitriy_tech',
-    full_name: 'Дмитрий Соколов',
-    photo_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Казань',
-    district: 'Ново-Савиновский',
-    age: 28,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'IT-разработчик, есть двухкомнатная квартира в новостройке. Ищу соседа, который разделит коммунальные расходы. Работаю удаленно, не курю.',
-    apartment_description: '2-комнатная квартира, 55 м², новостройка. Есть вся необходимая мебель и техника. Быстрый интернет, тихий район.'
-  },
-  {
-    tg_id: 1003,
-    username: 'maria_student',
-    full_name: 'Мария Иванова',
-    photo_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Казань',
-    district: 'Советский',
-    age: 21,
-    gender: 'female',
-    budget_min: 12000,
-    budget_max: 20000,
-    bio: 'Студентка медицинского университета. Серьезно отношусь к учебе, но люблю веселиться в свободное время. Ищу девушку для совместного проживания.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1004,
-    username: 'alex_moscow',
-    full_name: 'Александр Волков',
-    photo_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Москва',
-    district: '',
-    age: 26,
-    gender: 'male',
-    budget_min: 30000,
-    budget_max: 50000,
-    bio: 'Маркетолог, переехал в Москву по работе. Ищу квартиру и соседа в районе метро. Занимаюсь спортом, не конфликтный, за порядок.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1005,
-    username: 'elena_design',
-    full_name: 'Елена Смирнова',
-    photo_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Санкт-Петербург',
-    district: '',
-    age: 25,
-    gender: 'female',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Графический дизайнер, фрилансер. Есть уютная квартира в историческом центре. Ищу творческого соседа, который ценит искусство и атмосферу города.',
-    apartment_description: '1-комнатная студия, 40 м², исторический центр. Высокие потолки, большие окна, отличный ремонт. Рядом Невский проспект.'
-  },
-  {
-    tg_id: 1006,
-    username: 'ivan_student',
-    full_name: 'Иван Морозов',
-    photo_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Казань',
-    district: 'Авиастроительный',
-    age: 22,
-    gender: 'male',
-    budget_min: 10000,
-    budget_max: 18000,
-    bio: 'Студент технического университета, изучаю авиастроение. Тихий, учусь на отлично. Ищу такого же серьезного соседа для совместной аренды.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1007,
-    username: 'oksana_teacher',
-    full_name: 'Оксана Белова',
-    photo_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Екатеринбург',
-    district: '',
-    age: 29,
-    gender: 'female',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Учитель английского языка, есть просторная квартира рядом со школой. Ищу ответственную соседку, желательно тоже из сферы образования.',
-    apartment_description: '3-комнатная квартира, 70 м², кирпичный дом. Две свободные комнаты, отдельная кухня-гостиная. Рядом парк и остановка.'
-  },
-  {
-    tg_id: 1008,
-    username: 'ruslan_kazan',
-    full_name: 'Руслан Гайнуллин',
-    photo_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Казань',
-    district: 'Вахитовский',
-    age: 27,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Предприниматель, владелец кофейни. Есть квартира в центре с панорамным видом. Ищу соседа, который разделит расходы.',
-    apartment_description: '2-комнатная квартира, 65 м², 15 этаж. Панорамный вид на Кремль, современный ремонт, вся техника. Рядом Кремлевская набережная.'
-  },
-  {
-    tg_id: 1009,
-    username: 'alina_kzn',
-    full_name: 'Алина Сафина',
-    photo_url: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Казань',
-    district: 'Приволжский',
-    age: 24,
-    gender: 'female',
-    budget_min: 13000,
-    budget_max: 22000,
-    bio: 'Работаю в IT-компании аналитиком. Ищу квартиру и соседку недалеко от IT-park. Спокойная, чистоплотная.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1010,
-    username: 'timur_kzn',
-    full_name: 'Тимур Хасанов',
-    photo_url: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Казань',
-    district: 'Московский',
-    age: 30,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Инженер на заводе. Есть трёшка в Московском районе. Одна комната свободна. Тихий, не пью, не курю.',
-    apartment_description: '3-комнатная квартира, 75 м², кирпичный дом. Свежий ремонт, отдельная кухня, балкон. До метро 5 минут.'
-  },
-  {
-    tg_id: 1011,
-    username: 'kamila_kzn',
-    full_name: 'Камила Валеева',
-    photo_url: 'https://images.unsplash.com/photo-1532073150508-0c1df022bdd1?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Казань',
-    district: 'Вахитовский',
-    age: 22,
-    gender: 'female',
-    budget_min: 16000,
-    budget_max: 28000,
-    bio: 'Студентка, изучаю журналистику. Активная, общительная. Ищу соседку для совместной аренды в центре.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1012,
-    username: 'artem_kazan',
-    full_name: 'Артём Николаев',
-    photo_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Казань',
-    district: 'Ново-Савиновский',
-    age: 26,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Программист, работаю удаленно. Есть двушка в новостройке. Ищу тихого соседа, который не будет мешать работе.',
-    apartment_description: '2-комнатная квартира, 58 м², 10 этаж новостройки. Отличный ремонт, мебель, техника. Оптоволокно 500 Мбит/с.'
-  },
-  {
-    tg_id: 1013,
-    username: 'diana_kazan',
-    full_name: 'Диана Мингалеева',
-    photo_url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Казань',
-    district: 'Советский',
-    age: 25,
-    gender: 'female',
-    budget_min: 14000,
-    budget_max: 23000,
-    bio: 'Врач-стоматолог. Ищу соседку, желательно тоже из медицинской сферы. Аккуратная, ответственная.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1014,
-    username: 'denis_kzn',
-    full_name: 'Денис Яковлев',
-    photo_url: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Казань',
-    district: 'Кировский',
-    age: 29,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Менеджер по продажам. Есть двушка в Кировском районе. Одна комната свободна. Дружелюбный, за чистоту.',
-    apartment_description: '2-комнатная квартира, 52 м², 5/9 панельный дом. Хороший ремонт, вся мебель. Рядом парк Победы и торговый центр.'
-  },
-  {
-    tg_id: 1015,
-    username: 'regina_kazan',
-    full_name: 'Регина Ахметова',
-    photo_url: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Казань',
-    district: 'Приволжский',
-    age: 23,
-    gender: 'female',
-    budget_min: 12000,
-    budget_max: 20000,
-    bio: 'Учусь в Институте Управления. Тихая, не конфликтная. Ищу соседку для аренды квартиры.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1016,
-    username: 'ildar_kazan',
-    full_name: 'Ильдар Галиев',
-    photo_url: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Казань',
-    district: 'Вахитовский',
-    age: 31,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Архитектор. Есть просторная трёшка в историческом центре. Две комнаты свободны. Люблю порядок и тишину.',
-    apartment_description: '3-комнатная квартира, 82 м², исторический центр. Высокие потолки, лепнина, паркет. Вид на Кремль. Дизайнерский ремонт.'
-  },
-  {
-    tg_id: 1017,
-    username: 'julia_kzn',
-    full_name: 'Юлия Романова',
-    photo_url: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Казань',
-    district: 'Московский',
-    age: 26,
-    gender: 'female',
-    budget_min: 15000,
-    budget_max: 25000,
-    bio: 'Маркетолог в крупной компании. Ищу соседку для совместной аренды. Люблю готовить и принимать гостей.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1018,
-    username: 'marat_kazan',
-    full_name: 'Марат Нуриев',
-    photo_url: 'https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Казань',
-    district: 'Ново-Савиновский',
-    age: 28,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Финансовый аналитик. Есть двушка недалеко от Riviera. Ищу соседа, который поможет с коммуналкой.',
-    apartment_description: '2-комнатная квартира, 60 м², ЖК "Светлый". Современная планировка, мебель, техника. До ТРЦ Riviera 10 минут пешком.'
-  },
-  {
-    tg_id: 1019,
-    username: 'leysan_kazan',
-    full_name: 'Лейсан Шакирова',
-    photo_url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Казань',
-    district: 'Советский',
-    age: 24,
-    gender: 'female',
-    budget_min: 13000,
-    budget_max: 21000,
-    bio: 'Дизайнер интерьеров. Творческая личность. Ищу соседку с похожими интересами для совместной аренды.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1020,
-    username: 'rinat_kzn',
-    full_name: 'Ринат Закиров',
-    photo_url: 'https://images.unsplash.com/photo-1534030347209-467a5b0ad3e6?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Казань',
-    district: 'Авиастроительный',
-    age: 27,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Инженер на авиазаводе. Есть однушка рядом с работой. Ищу соседа для разделения расходов. Спокойный, за ЗОЖ.',
-    apartment_description: '1-комнатная квартира, 38 м², новый дом. Свежий ремонт, встроенная кухня. Рядом КАИ и авиазавод.'
-  },
-  {
-    tg_id: 1021,
-    username: 'svetlana_kazan',
-    full_name: 'Светлана Козлова',
-    photo_url: 'https://images.unsplash.com/photo-1598897516650-e4dc73d8e417?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Казань',
-    district: 'Кировский',
-    age: 22,
-    gender: 'female',
-    budget_min: 11000,
-    budget_max: 19000,
-    bio: 'Студентка педагогического университета. Тихая, спокойная. Ищу соседку для совместной аренды недорогой квартиры.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1022,
-    username: 'aidar_kazan',
-    full_name: 'Айдар Файзуллин',
-    photo_url: 'https://images.unsplash.com/photo-1522556189639-b150ed9c4330?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Казань',
-    district: 'Приволжский',
-    age: 30,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Бизнес-тренер. Есть трёшка с хорошим ремонтом. Одна комната свободна. Ищу ответственного соседа.',
-    apartment_description: '3-комнатная квартира, 78 м², монолит. Качественный ремонт, большая кухня-студия, два санузла. Закрытый двор с парковкой.'
-  },
-  {
-    tg_id: 1023,
-    username: 'alsu_kazan',
-    full_name: 'Алсу Гараева',
-    photo_url: 'https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Казань',
-    district: 'Вахитовский',
-    age: 25,
-    gender: 'female',
-    budget_min: 17000,
-    budget_max: 29000,
-    bio: 'Юрист в крупной компании. Ищу соседку для аренды квартиры в центре. Аккуратная, без вредных привычек.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1024,
-    username: 'vadim_kazan',
-    full_name: 'Вадим Петров',
-    photo_url: 'https://images.unsplash.com/photo-1544168190-79c17527004f?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Казань',
-    district: 'Московский',
-    age: 29,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Врач-хирург. Есть двушка недалеко от больницы. Ищу соседа, желательно тоже из медицины. За чистоту и порядок.',
-    apartment_description: '2-комнатная квартира, 54 м², 8/16 кирпичный дом. Хороший ремонт, вся мебель и техника. Рядом РКБ и метро.'
-  },
-  {
-    tg_id: 1025,
-    username: 'zarina_kzn',
-    full_name: 'Зарина Хамитова',
-    photo_url: 'https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Казань',
-    district: 'Ново-Савиновский',
-    age: 23,
-    gender: 'female',
-    budget_min: 14000,
-    budget_max: 22000,
-    bio: 'Фотограф-фрилансер. Творческая, открытая к общению. Ищу соседку для совместной аренды.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1026,
-    username: 'anton_kazan',
-    full_name: 'Антон Смирнов',
-    photo_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Казань',
-    district: 'Советский',
-    age: 32,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Преподаватель университета. Есть трёшка рядом с КФУ. Две комнаты свободны. Ищу тихих соседей, желательно студентов.',
-    apartment_description: '3-комнатная квартира, 72 м², сталинка. Высокие потолки, большая кухня, балкон. До КФУ 10 минут пешком.'
-  },
-  {
-    tg_id: 1027,
-    username: 'gulshat_kazan',
-    full_name: 'Гульшат Камалова',
-    photo_url: 'https://images.unsplash.com/photo-1552699611-e2c208d5d9cf?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Казань',
-    district: 'Приволжский',
-    age: 26,
-    gender: 'female',
-    budget_min: 15000,
-    budget_max: 24000,
-    bio: 'HR-менеджер. Ищу соседку для аренды квартиры. Люблю йогу, здоровый образ жизни. Чистоплотная.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1028,
-    username: 'sergey_msk',
-    full_name: 'Сергей Лебедев',
-    photo_url: 'https://images.unsplash.com/photo-1489980557514-251d61e3eeb6?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Москва',
-    district: '',
-    age: 28,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Менеджер IT-проекта. Есть двушка в районе метро Тульская. Ищу соседа для разделения расходов. Спокойный, работаю много.',
-    apartment_description: '2-комнатная квартира, 50 м², 12/17 панельный дом. Евроремонт, мебель, техника. До метро Тульская 5 минут.'
-  },
-  {
-    tg_id: 1029,
-    username: 'natasha_msk',
-    full_name: 'Наташа Соловьёва',
-    photo_url: 'https://images.unsplash.com/photo-1485893086445-ed75865251e0?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Москва',
-    district: '',
-    age: 25,
-    gender: 'female',
-    budget_min: 25000,
-    budget_max: 40000,
-    bio: 'Копирайтер в рекламном агентстве. Ищу соседку для совместной аренды в центре Москвы. Общительная, люблю котиков.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1030,
-    username: 'pavel_ekb',
-    full_name: 'Павел Кузнецов',
-    photo_url: 'https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Екатеринбург',
-    district: '',
-    age: 27,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Инженер-программист. Есть однушка в центре Екатеринбурга. Ищу соседа для совместного проживания. Не курю, спокойный.',
-    apartment_description: '1-комнатная квартира-студия, 42 м², новостройка. Современный ремонт, вся техника. Центр города, рядом Плотинка.'
-  },
-  {
-    tg_id: 1031,
-    username: 'olga_ekb',
-    full_name: 'Ольга Васильева',
-    photo_url: 'https://images.unsplash.com/photo-1503185912284-5271ff81b9a8?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Екатеринбург',
-    district: '',
-    age: 24,
-    gender: 'female',
-    budget_min: 12000,
-    budget_max: 20000,
-    bio: 'Студентка УрФУ, изучаю экономику. Ищу соседку для совместной аренды. Аккуратная, не шумная.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1032,
-    username: 'igor_chel',
-    full_name: 'Игорь Морозов',
-    photo_url: 'https://images.unsplash.com/photo-1624395213043-fa2e123b2656?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Челябинск',
-    district: '',
-    age: 30,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Инженер на металлургическом заводе. Есть двушка в спальном районе. Ищу соседа, за ЗОЖ.',
-    apartment_description: '2-комнатная квартира, 52 м², 5/9 панельный дом. Обычный ремонт, есть вся мебель. Тихий район, рядом парк.'
-  },
-  {
-    tg_id: 1033,
-    username: 'anna_chel',
-    full_name: 'Анна Федорова',
-    photo_url: 'https://images.unsplash.com/photo-1484863137850-59afcfe05386?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Челябинск',
-    district: '',
-    age: 23,
-    gender: 'female',
-    budget_min: 10000,
-    budget_max: 17000,
-    bio: 'Менеджер по продажам. Ищу соседку для аренды недорогой квартиры. Общительная, люблю готовить.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1034,
-    username: 'dima_ufa',
-    full_name: 'Дмитрий Сидоров',
-    photo_url: 'https://images.unsplash.com/photo-1517070208541-6ddc4d3efbcb?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Уфа',
-    district: '',
-    age: 29,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Нефтяник. Есть двушка в новом районе. Ищу соседа для разделения коммунальных расходов. Тихий, не конфликтный.',
-    apartment_description: '2-комнатная квартира, 56 м², новостройка. Хороший ремонт, встроенная кухня, лоджия. Рядом торговый центр.'
-  },
-  {
-    tg_id: 1035,
-    username: 'lena_ufa',
-    full_name: 'Лена Иванова',
-    photo_url: 'https://images.unsplash.com/photo-1521146764736-56c929d59c83?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Уфа',
-    district: '',
-    age: 22,
-    gender: 'female',
-    budget_min: 11000,
-    budget_max: 18000,
-    bio: 'Студентка медицинского университета. Серьезная, ответственная. Ищу соседку для совместной аренды.',
-    apartment_description: null
-  },
-  {
-    tg_id: 1036,
-    username: 'maxim_msk',
-    full_name: 'Максим Новиков',
-    photo_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 1,
-    city: 'Москва',
-    district: '',
-    age: 31,
-    gender: 'male',
-    budget_min: 0,
-    budget_max: 0,
-    bio: 'Финансовый консультант. Есть трёшка в районе Сокольники. Две комнаты свободны. Ищу соседей без вредных привычек.',
-    apartment_description: '3-комнатная квартира, 85 м², сталинка. Высокие потолки, большая кухня, паркет. Рядом парк Сокольники и метро.'
-  },
-  {
-    tg_id: 1037,
-    username: 'karina_ekb',
-    full_name: 'Карина Белова',
-    photo_url: 'https://images.unsplash.com/photo-1505968409348-bd000797c92e?w=400&h=400&fit=crop&crop=face',
-    has_apartment: 0,
-    city: 'Екатеринбург',
-    district: '',
-    age: 26,
-    gender: 'female',
-    budget_min: 13000,
-    budget_max: 22000,
-    bio: 'Маркетолог. Ищу соседку для аренды квартиры в хорошем районе. Чистоплотная, люблю порядок и уют.',
-    apartment_description: null
-  }
+// Ensure `apartment_description` column exists (SQLite doesn't support IF NOT EXISTS for ADD COLUMN)
+try {
+  db.exec('ALTER TABLE users ADD COLUMN apartment_description TEXT')
+} catch (err) {
+  // ignore if column already exists
+}
+
+// Коллекция фотографий для женщин
+const femalePhotos = [
+  'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1559548331-f9cb98001426?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1525134479668-1bee5c7c6845?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1594824694996-65274cd88d88?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1609505848912-b7c3b8b4beda?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1616091216791-4f5b5b7c1f8c?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1618641986557-1ecd230959aa?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1619895862022-09114b41f16f?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=400&h=400&fit=crop&crop=face'
 ]
 
-function addMockUsers() {
-  console.log('Добавляем мок пользователей...')
+// Коллекция фотографий для мужчин
+const malePhotos = [
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1513956589380-bad6acb9b9d4?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1566492031773-4f4e44671d66?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1566753323558-f4e0952af115?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1590086782792-42dd2350140d?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1592334873219-42ca023ed430?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1600481176431-47ad2ab2745d?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1605462863863-10d9e47e15ee?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1615109398623-88346a601842?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1624561172888-ac93c696aba0?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1628157588553-5eeea00af15c?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1636041293178-808a6762ab39?w=400&h=400&fit=crop&crop=face'
+]
 
-  const mockIdRange = 'tg_id >= 1001 AND tg_id <= 1037'
-  db.prepare(`DELETE FROM test_answers WHERE user_id IN (SELECT id FROM users WHERE ${mockIdRange})`).run()
-  db.prepare(`DELETE FROM likes WHERE from_user_id IN (SELECT id FROM users WHERE ${mockIdRange}) OR to_user_id IN (SELECT id FROM users WHERE ${mockIdRange})`).run()
-  const deleteMockUsers = db.prepare(`DELETE FROM users WHERE ${mockIdRange}`)
-  const deletedCount = deleteMockUsers.run().changes
-  console.log(`Удалено ${deletedCount} существующих мок пользователей`)
-
-  const insertUser = db.prepare(`
-    INSERT INTO users (
-      tg_id, username, full_name, photo_url, has_apartment, 
-      city, district, age, gender, budget_min, budget_max, bio, apartment_description
-    ) VALUES (
-      @tg_id, @username, @full_name, @photo_url, @has_apartment,
-      @city, @district, @age, @gender, @budget_min, @budget_max, @bio, @apartment_description
-    )
-  `)
+// Функция для получения случайной фотографии по полу
+function getRandomPhotoByGender(gender, usedPhotos = new Set()) {
+  const photos = gender === 'female' ? femalePhotos : malePhotos
+  const availablePhotos = photos.filter(photo => !usedPhotos.has(photo))
   
-  let addedCount = 0
-  for (const user of mockUsers) {
-    try {
-      insertUser.run(user)
-      addedCount++
-      console.log(`Добавлен пользователь: ${user.full_name} (@${user.username})`)
-    } catch (error) {
-      console.error(`Ошибка при добавлении пользователя ${user.full_name}:`, error.message)
-    }
+  if (availablePhotos.length === 0) {
+    // Если все фотографии использованы, берем случайную из всех
+    return photos[Math.floor(Math.random() * photos.length)]
   }
   
-  console.log(`\nУспешно добавлено ${addedCount} из ${mockUsers.length} мок пользователей`)
-
-  const cityStats = db.prepare('SELECT city, COUNT(*) as count FROM users WHERE tg_id >= 1001 AND tg_id <= 1037 GROUP BY city').all()
-  console.log('\nСтатистика по городам:')
-  cityStats.forEach(stat => {
-    console.log(`  ${stat.city}: ${stat.count} пользователей`)
-  })
-  
-  const apartmentStats = db.prepare('SELECT COUNT(*) as count FROM users WHERE tg_id >= 1001 AND tg_id <= 1037 AND has_apartment = 1').get()
-  console.log(`\nПользователей с квартирой: ${apartmentStats.count}`)
-  console.log(`Пользователей без квартиры: ${mockUsers.length - apartmentStats.count}`)
+  const selectedPhoto = availablePhotos[Math.floor(Math.random() * availablePhotos.length)]
+  usedPhotos.add(selectedPhoto)
+  return selectedPhoto
 }
+
+// New mock users: only from Казань, Уфа, Челябинск, Москва, Екатеринбург
+// Kazan users will have district set (various districts). Budgets are multiples of 500.
+function randMultipleOf(step, min, max) {
+  const steps = Math.floor((max - min) / step) + 1
+  return min + Math.floor(Math.random() * steps) * step
+}
+
+const kazanDistrictsForMock = ['Вахитовский','Авиастроительный','Кировский','Приволжский','Московский','Ново-Савиновский','Советский']
+
+const mockUsers = []
+let nextTg = 1001
+
+// helper to push user
+function addUser({username, full_name, city, district = '', age = 24, gender = 'female', has_apartment = 0, bio = '', apartment_description = null, budget_min = null, budget_max = null}){
+  // budgets: if null and user has no apartment -> pick random multiples of 500; if has_apartment -> 0
+  if (has_apartment) {
+    budget_min = 0
+    budget_max = 0
+  } else {
+    if (budget_min == null) budget_min = randMultipleOf(500, 5000, 25000)
+    if (budget_max == null) budget_max = Math.max(budget_min + 500, randMultipleOf(500, budget_min + 500, Math.max(25000, budget_min + 500)))
+  }
+
+  mockUsers.push({
+    tg_id: nextTg++,
+    username,
+    full_name,
+    has_apartment: has_apartment ? 1 : 0,
+    city,
+    district: city === 'Казань' ? district || kazanDistrictsForMock[Math.floor(Math.random()*kazanDistrictsForMock.length)] : '',
+    age,
+    gender,
+    budget_min,
+    budget_max,
+    bio: bio || (has_apartment ? 'Есть квартира, ищу соседа.' : 'Ищу квартиру и соседа.'),
+    apartment_description: has_apartment ? (apartment_description || 'Уютная квартира с хорошим ремонтом') : null
+  })
+}
+
+// Make a balanced set: per city create several users; Kazan users use different districts
+const citiesForMocks = ['Казань','Уфа','Челябинск','Москва','Екатеринбург']
+
+// Add explicit varied users
+addUser({username: 'anna_kzn', full_name: 'Анна Казанова', city: 'Казань', district: 'Вахитовский', age: 23, gender: 'female', has_apartment: 0, budget_min: 1500*10, budget_max: 2500*10})
+addUser({username: 'dmitriy_kzn', full_name: 'Дмитрий Казанцев', city: 'Казань', district: 'Ново-Савиновский', age: 28, gender: 'male', has_apartment: 1, apartment_description: 'Двухкомнатная квартира в новостройке'})
+addUser({username: 'maria_kzn', full_name: 'Мария Петрова', city: 'Казань', district: 'Советский', age: 21, gender: 'female', has_apartment: 0, budget_min: 12000, budget_max: 18000})
+addUser({username: 'ivan_kzn', full_name: 'Иван Морозов', city: 'Казань', district: 'Авиастроительный', age: 22, gender: 'male', has_apartment: 0, budget_min: 10000, budget_max: 15000})
+addUser({username: 'oksana_ekb', full_name: 'Оксана Белова', city: 'Екатеринбург', age: 29, gender: 'female', has_apartment: 1, apartment_description: 'Однокомнатная в центре'})
+addUser({username: 'alex_msc', full_name: 'Алексей Смирнов', city: 'Москва', age: 26, gender: 'male', has_apartment: 0, budget_min: 30000, budget_max: 40000})
+addUser({username: 'elena_ufa', full_name: 'Елена Уфимская', city: 'Уфа', age: 25, gender: 'female', has_apartment: 1, apartment_description: 'Уютная квартира в спальном районе'})
+addUser({username: 'roman_chel', full_name: 'Роман Челнин', city: 'Челябинск', age: 27, gender: 'male', has_apartment: 0, budget_min: 20000, budget_max: 30000})
+addUser({username: 'liza_msc', full_name: 'Елизавета Артемьева', city: 'Москва', age: 26, gender: 'female', has_apartment: 1, apartment_description: 'Большая комната в трехкомнатной квартире'})
+addUser({username: 'sergey_kzn', full_name: 'Сергей Николаев', city: 'Казань', district: 'Приволжский', age: 25, gender: 'male', has_apartment: 0, budget_min: 15000, budget_max: 20000})
+addUser({username: 'nastya_ufa', full_name: 'Анастасия Белкина', city: 'Уфа', age: 22, gender: 'female', has_apartment: 0, budget_min: 17500, budget_max: 22500})
+addUser({username: 'pavel_ekb', full_name: 'Павел Морозов', city: 'Екатеринбург', age: 30, gender: 'male', has_apartment: 1, apartment_description: 'Двухкомнатная, ищу соседа'})
+addUser({username: 'anna_msc', full_name: 'Анна Федорова', city: 'Москва', age: 23, gender: 'female', has_apartment: 0, budget_min: 27500, budget_max: 35000})
+addUser({username: 'max_kzn', full_name: 'Максим Киров', city: 'Казань', district: 'Кировский', age: 24, gender: 'male', has_apartment: 0, budget_min: 12000, budget_max: 20000})
+addUser({username: 'olga_ekb', full_name: 'Ольга Лекарева', city: 'Екатеринбург', age: 28, gender: 'female', has_apartment: 1, apartment_description: 'Рядом с работой'})
+addUser({username: 'artem_msc', full_name: 'Артем Поваров', city: 'Москва', age: 26, gender: 'male', has_apartment: 0, budget_min: 25000, budget_max: 30000})
+addUser({username: 'vera_kzn', full_name: 'Вера Учителева', city: 'Казань', district: 'Московский', age: 27, gender: 'female', has_apartment: 1, apartment_description: 'Уютная однокомнатная квартира'})
+addUser({username: 'denis_ekb', full_name: 'Денис Автомеханик', city: 'Екатеринбург', age: 25, gender: 'male', has_apartment: 0, budget_min: 15000, budget_max: 25000})
+addUser({username: 'alex_kazan', full_name: 'Александр Сидоров', city: 'Казань', district: 'Вахитовский', age: 25, gender: 'male', has_apartment: 0})
+addUser({username: 'dima_kazan', full_name: 'Дмитрий Кузнецов', city: 'Казань', district: 'Авиастроительный', age: 26, gender: 'male', has_apartment: 1, apartment_description: 'Однокомнатная квартира'})
+addUser({username: 'sergey_kazan', full_name: 'Сергей Смирнов', city: 'Казань', district: 'Кировский', age: 24, gender: 'male', has_apartment: 0})
+addUser({username: 'andrey_kazan', full_name: 'Андрей Попов', city: 'Казань', district: 'Приволжский', age: 27, gender: 'male', has_apartment: 1, apartment_description: 'Двухкомнатная квартира'})
+addUser({username: 'alexey_kazan', full_name: 'Алексей Волков', city: 'Казань', district: 'Московский', age: 23, gender: 'male', has_apartment: 0})
+addUser({username: 'mikhail_kazan', full_name: 'Михаил Соколов', city: 'Казань', district: 'Ново-Савиновский', age: 28, gender: 'male', has_apartment: 1, apartment_description: 'Уютная студия'})
+addUser({username: 'pavel_kazan', full_name: 'Павел Лебедев', city: 'Казань', district: 'Советский', age: 22, gender: 'male', has_apartment: 0})
+addUser({username: 'roman_kazan', full_name: 'Роман Козлов', city: 'Казань', district: 'Вахитовский', age: 29, gender: 'male', has_apartment: 1, apartment_description: 'Квартира в центре'})
+addUser({username: 'nikolay_kazan', full_name: 'Николай Новиков', city: 'Казань', district: 'Авиастроительный', age: 26, gender: 'male', has_apartment: 0})
+addUser({username: 'ivan_kazan', full_name: 'Иван Морозов', city: 'Казань', district: 'Кировский', age: 24, gender: 'male', has_apartment: 1, apartment_description: 'Комната в квартире'})
+addUser({username: 'anna_kazan', full_name: 'Анна Иванова', city: 'Казань', district: 'Вахитовский', age: 25, gender: 'female', has_apartment: 0})
+addUser({username: 'maria_kazan', full_name: 'Мария Петрова', city: 'Казань', district: 'Авиастроительный', age: 26, gender: 'female', has_apartment: 1, apartment_description: 'Однокомнатная квартира'})
+addUser({username: 'elena_kazan', full_name: 'Елена Сидорова', city: 'Казань', district: 'Кировский', age: 24, gender: 'female', has_apartment: 0})
+addUser({username: 'olga_kazan', full_name: 'Ольга Кузнецова', city: 'Казань', district: 'Приволжский', age: 27, gender: 'female', has_apartment: 1, apartment_description: 'Двухкомнатная квартира'})
+addUser({username: 'tatyana_kazan', full_name: 'Татьяна Смирнова', city: 'Казань', district: 'Московский', age: 23, gender: 'female', has_apartment: 0})
+addUser({username: 'natalya_kazan', full_name: 'Наталья Попова', city: 'Казань', district: 'Ново-Савиновский', age: 28, gender: 'female', has_apartment: 1, apartment_description: 'Уютная студия'})
+addUser({username: 'svetlana_kazan', full_name: 'Светлана Волкова', city: 'Казань', district: 'Советский', age: 22, gender: 'female', has_apartment: 0})
+addUser({username: 'irina_kazan', full_name: 'Ирина Соколова', city: 'Казань', district: 'Вахитовский', age: 29, gender: 'female', has_apartment: 1, apartment_description: 'Квартира в центре'})
+addUser({username: 'ekaterina_kazan', full_name: 'Екатерина Лебедева', city: 'Казань', district: 'Авиастроительный', age: 26, gender: 'female', has_apartment: 0})
+addUser({username: 'yuliya_kazan', full_name: 'Юлия Козлова', city: 'Казань', district: 'Кировский', age: 24, gender: 'female', has_apartment: 1, apartment_description: 'Комната в квартире'})
+addUser({username: 'kristina_msc', full_name: 'Кристина Дизайнер', city: 'Москва', age: 24, gender: 'female', has_apartment: 0, budget_min: 22000, budget_max: 33000})
+// Generate some additional mixed users to reach ~40 entries
+const additionalNames = [
+  { name: 'Вадим Сантехников', gender: 'male', username: 'vadim_plumb' },
+  { name: 'Ирина Пилотова', gender: 'female', username: 'irina_pilot' },
+  { name: 'Антон Инженеров', gender: 'male', username: 'anton_eng' },
+  { name: 'Милана Стюардесс', gender: 'female', username: 'milana_stew' },
+  { name: 'Роман Техников', gender: 'male', username: 'roman_tech' },
+  { name: 'Юлия Банкирова', gender: 'female', username: 'julia_bank' },
+  { name: 'Тимофей Кофейников', gender: 'male', username: 'tim_coffee' },
+  { name: 'Полина Психологова', gender: 'female', username: 'polina_psych' },
+  { name: 'Константин Фотографов', gender: 'male', username: 'kostya_photo' },
+  { name: 'Александра Переводчицына', gender: 'female', username: 'sasha_trans' },
+  { name: 'Артур Танцоров', gender: 'male', username: 'arthur_dance' },
+  { name: 'Виктория Ветеринарова', gender: 'female', username: 'vika_vet' },
+  { name: 'Егор Геймеров', gender: 'male', username: 'egor_game' },
+  { name: 'Валерия Цветочкина', gender: 'female', username: 'lera_flower' },
+  { name: 'Зоя Поварёшкина', gender: 'female', username: 'zoya_cook' },
+  { name: 'Ян Татуировщиков', gender: 'male', username: 'yan_tattoo' },
+  { name: 'Марина Риелторша', gender: 'female', username: 'marina_real' },
+  { name: 'Степан Курьеров', gender: 'male', username: 'stepan_deliver' },
+  { name: 'Анна Менеджерова', gender: 'female', username: 'anna_manager' },
+  { name: 'Федор Кузнецов', gender: 'male', username: 'fedor_smith' },
+  { name: 'Татьяна Массажистка', gender: 'female', username: 'tanya_massage' },
+  { name: 'Алексей Бармен', gender: 'male', username: 'alex_bar' },
+  { name: 'Людмила Экономистка', gender: 'female', username: 'lyuda_econ' },
+  { name: 'Григорий Строитель', gender: 'male', username: 'grisha_build' },
+  { name: 'Екатерина Блогерша', gender: 'female', username: 'katya_blog' },
+  { name: 'Михаил Доставщиков', gender: 'male', username: 'misha_delivery' }
+]
+
+const cities = ['Казань','Уфа','Челябинск','Москва','Екатеринбург']
+const districts = kazanDistrictsForMock
+
+// Добавляем дополнительных пользователей
+additionalNames.forEach((person, index) => {
+  const tgId = nextTg++
+  const city = cities[Math.floor(Math.random() * cities.length)]
+  const district = city === 'Казань' ? districts[Math.floor(Math.random() * districts.length)] : ''
+  const age = 22 + Math.floor(Math.random() * 12) // возраст от 22 до 33
+  const hasApartment = Math.random() > 0.6 ? 1 : 0
+  const gender = person.gender
+  const username = person.username + '_' + (index+1)
+
+  const budget_min = hasApartment ? 0 : randMultipleOf(500, 5000, 30000)
+  const budget_max = hasApartment ? 0 : Math.max(budget_min + 500, randMultipleOf(500, budget_min + 500, 40000))
+
+  mockUsers.push({
+    tg_id: tgId,
+    username: username,
+    full_name: person.name,
+    has_apartment: hasApartment,
+    city: city,
+    district: district,
+    age: age,
+    gender: gender,
+    budget_min: budget_min,
+    budget_max: budget_max,
+    bio: `${hasApartment ? 'Есть квартира, ищу соседа.' : 'Ищу квартиру и соседа.'} Работаю по специальности, ответственный человек.`,
+    apartment_description: hasApartment ? 'Уютная квартира с хорошим ремонтом' : null
+  })
+})
+
+console.log(`Подготовлено ${mockUsers.length} пользователей для добавления в базу данных`)
+
+// Отслеживаем использованные фотографии
+const usedFemalePhotos = new Set()
+const usedMalePhotos = new Set()
+
+// Добавляем фотографии к каждому пользователю
+mockUsers.forEach(user => {
+  if (user.gender === 'female') {
+    user.photo_url = getRandomPhotoByGender('female', usedFemalePhotos)
+  } else {
+    user.photo_url = getRandomPhotoByGender('male', usedMalePhotos)
+  }
+})
+
+// Очищаем таблицу пользователей
+db.prepare('DELETE FROM users WHERE tg_id >= 1001').run()
+
+// Добавляем пользователей
+const insertUser = db.prepare(`
+  INSERT INTO users (
+    tg_id, username, full_name, photo_url, has_apartment, city, district, 
+    age, gender, budget_min, budget_max, bio, apartment_description
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`)
+
+const transaction = db.transaction(() => {
+  mockUsers.forEach(user => {
+    insertUser.run(
+      user.tg_id,
+      user.username,
+      user.full_name,
+      user.photo_url,
+      user.has_apartment,
+      user.city,
+      user.district,
+      user.age,
+      user.gender,
+      user.budget_min,
+      user.budget_max,
+      user.bio,
+      user.apartment_description
+    )
+  })
+})
 
 try {
-  addMockUsers()
+  transaction()
+  console.log(`Успешно добавлено ${mockUsers.length} мок пользователей с уникальными фотографиями!`)
+  
+  // Статистика по использованным фотографиям
+  const femaleCount = mockUsers.filter(u => u.gender === 'female').length
+  const maleCount = mockUsers.filter(u => u.gender === 'male').length
+  
+  console.log(`Женщин: ${femaleCount} (использовано ${usedFemalePhotos.size} уникальных фото из ${femalePhotos.length} доступных)`)
+  console.log(`Мужчин: ${maleCount} (использовано ${usedMalePhotos.size} уникальных фото из ${malePhotos.length} доступных)`)
+  
 } catch (error) {
-  console.error('Ошибка при выполнении скрипта:', error)
-} finally {
-  db.close()
+  console.error('Ошибка при добавлении пользователей:', error)
 }
+
+db.close()

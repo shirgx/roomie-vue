@@ -18,8 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
   budget_min INTEGER,
   budget_max INTEGER,
   bio TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  apartment_description TEXT
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS likes (
   from_user_id INTEGER NOT NULL,

@@ -1,40 +1,30 @@
 {
-  "name": "roomie-telegram-miniapp-backend",
-  "version": "1.0.0",
+  "name": "roomie-backend",
+  "version": "0.1.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
-    "build": "tsc",
-    "test": "vitest",
-    "lint": "eslint src/**/*.ts"
+    "build": "tsc -p tsconfig.json",
+    "postinstall": "npm run build"
   },
   "dependencies": {
-    "@telegram-apps/init-data-node": "^2.0.0",
-    "@telegram-apps/sdk": "^3.11.8",
-    "express": "^4.19.2",
+    "@types/multer": "^2.0.0",
+    "better-sqlite3": "^9.6.0",
     "cors": "^2.8.5",
-    "helmet": "^7.1.0",
-    "compression": "^1.7.4",
     "dotenv": "^17.2.2",
-    "nanoid": "^5.0.4",
-    "zod": "^3.22.4",
-    "rate-limiter-flexible": "^5.0.3"
+    "express": "^4.19.2",
+    "fs": "^0.0.1-security",
+    "https": "^1.0.0",
+    "multer": "^2.0.2",
+    "path": "^0.12.7"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/cors": "^2.8.17",
-    "@types/compression": "^1.7.5",
-    "@types/node": "^20.0.0",
-    "typescript": "^5.3.0",
-    "tsx": "^4.7.0",
-    "vitest": "^1.2.0",
-    "eslint": "^8.56.0",
-    "@typescript-eslint/eslint-plugin": "^6.19.0",
-    "@typescript-eslint/parser": "^6.19.0"
-  },
-  "engines": {
-    "node": ">=18.0.0"
+    "@types/express": "^4.17.21",
+    "tsx": "^4.16.2",
+    "typescript": "^5.6.2"
   }
 }
-

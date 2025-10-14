@@ -1,6 +1,6 @@
 <template>
   <div class="max-h-[80vh] overflow-y-auto backdrop-blur-sm rounded-xl relative bg-secondary/30">
-    <div class="px-4 pt-4 pb-2 border-b border-border/50">
+    <div class="sticky top-0 bg-secondary/30 backdrop-blur-md z-10 px-4 pt-4 pb-2 border-b">
       <h2 class="text-lg font-medium">Фильтры</h2>
     </div>
     
@@ -176,13 +176,13 @@
       </div>
     </div>
 
-    <div class="px-4 pb-4 pt-2 border-t border-border/50">
+    <div class="sticky bottom-0 bg-secondary/30 backdrop-blur-md z-10 px-4 pb-4 pt-2 border-t">
       <div class="flex gap-2">
-        <Button class="px-4 py-2 rounded-md bg-muted text-muted-foreground w-full" @click="reset">
-          Сбросить
-        </Button>
-        <Button class="px-4 py-2 rounded-md bg-destructive text-destructive-foreground w-full" @click="cancel">
+        <Button class="px-4 py-2 rounded-md border border-border w-full" @click="cancel">
           Отмена
+        </Button>
+        <Button class="px-4 py-2 rounded-md bg-destructive text-destructive-foreground w-full" @click="resetFilters">
+          Сбросить
         </Button>
         <Button class="px-4 py-2 rounded-md bg-primary text-primary-foreground w-full" @click="apply">
           Применить
@@ -194,98 +194,35 @@
 
 <script setup lang="ts">
 import { reactive, ref, watch, computed, onMounted } from 'vue'
-import { Check, Search } from "lucide-vue-next"
-import { 
-  Combobox, 
-  ComboboxAnchor, 
-  ComboboxEmpty, 
-  ComboboxGroup, 
-  ComboboxInput, 
-  ComboboxItem, 
-  ComboboxItemIndicator, 
-  ComboboxList 
-} from "@/components/ui/combobox"
-import { Label } from "@/components/ui/label"
-import {
-  NumberField,
-  NumberFieldContent,
-  NumberFieldDecrement,
-  NumberFieldIncrement,
-  NumberFieldInput,
-} from "@/components/ui/number-field"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Button } from "@/components/ui/button"
+import { Check, Search } from 'lucide-vue-next'
+import { Combobox, ComboboxAnchor, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxItemIndicator, ComboboxList } from '@/components/ui/combobox'
+import { Label } from '@/components/ui/label'
+import { NumberField, NumberFieldContent, NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput } from '@/components/ui/number-field'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Button } from '@/components/ui/button'
+import { useHeader } from '@/stores/ui'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
+const headerStore = useHeader()
 
 const cities = [
-  { value: "Москва", Label: "Москва" },
-  { value: "Казань", Label: "Казань" },
-  { value: "Челябинск", Label: "Челябинск" },
-  { value: "Уфа", Label: "Уфа" },
-  { value: "Екатеринбург", Label: "Екатеринбург" },
+  { value: 'Москва', Label: 'Москва' },
+  { value: 'Казань', Label: 'Казань' },
+  { value: 'Челябинск', Label: 'Челябинск' },
+  { value: 'Уфа', Label: 'Уфа' },
+  { value: 'Екатеринбург', Label: 'Екатеринбург' },
 ]
 
-const model = defineModel<any>({ default: {} })   
-const selectedCity = ref()
-const selectedDistrict = ref()
+const selectedCity = ref<any>()
+const selectedDistrict = ref<string>()
 const localFilters = reactive({
-  looking_for_apartment: false as boolean,
+  looking_for_apartment: undefined as boolean | undefined,
   city: '',
   district: '',
   age_min: undefined as number | undefined,
   age_max: undefined as number | undefined,
   budget_min: undefined as number | undefined,
   budget_max: undefined as number | undefined,
-})
-
-const kazanDistricts = [
-  'Вахитовский',
-  'Авиастроительный',
-  'Кировский', 
-  'Московский',
-  'Ново-Савиновский',
-  'Советский',
-  'Приволжский'
-]
-
-const showDistrictFilter = computed(() => {
-  return localFilters.city?.toLowerCase() === 'казань'
-})
-
-onMounted(async () => {
-  const { useHeader } = await import('@/stores/ui')
-  const headerStore = useHeader()
-  const savedFilters = headerStore.getFilters()
-  
-  if (savedFilters && Object.keys(savedFilters).length > 0) {
-    if (savedFilters.looking_for_apartment !== undefined) {
-      localFilters.looking_for_apartment = savedFilters.looking_for_apartment
-    }
-    if (savedFilters.city) {
-      localFilters.city = savedFilters.city
-      const cityObj = cities.find(c => c.value === savedFilters.city)
-      if (cityObj) {
-        selectedCity.value = cityObj
-      }
-    }
-    if (savedFilters.district) {
-      localFilters.district = savedFilters.district
-      selectedDistrict.value = savedFilters.district
-    }
-    if (savedFilters.age_min !== undefined) {
-      localFilters.age_min = savedFilters.age_min
-    }
-    if (savedFilters.age_max !== undefined) {
-      localFilters.age_max = savedFilters.age_max
-    }
-    if (savedFilters.budget_min !== undefined) {
-      localFilters.budget_min = savedFilters.budget_min
-    }
-    if (savedFilters.budget_max !== undefined) {
-      localFilters.budget_max = savedFilters.budget_max
-    }
-  }
 })
 
 watch(selectedCity, (newCity) => {
@@ -296,21 +233,53 @@ watch(selectedDistrict, (newDistrict) => {
   localFilters.district = newDistrict || ''
 })
 
-watch(() => localFilters.city, (newCity) => {
-  if (newCity?.toLowerCase() !== 'казань') {
-    localFilters.district = ''
-    selectedDistrict.value = ''
+const kazanDistricts = [
+  'Вахитовский',
+  'Авиастроительный',
+  'Кировский',
+  'Московский',
+  'Ново-Савиновский',
+  'Советский',
+  'Приволжский',
+]
+
+const showDistrictFilter = computed(() => {
+  return localFilters.city?.toLowerCase() === 'казань'
+})
+
+watch(
+  () => localFilters.city,
+  (newCity) => {
+    if (newCity?.toLowerCase() !== 'казань') {
+      localFilters.district = ''
+      selectedDistrict.value = ''
+    }
   }
+)
+
+function seedFromStore() {
+  const saved = headerStore.getFilters() || {}
+  localFilters.looking_for_apartment = saved.looking_for_apartment === true ? true : undefined
+  localFilters.city = saved.city || ''
+  localFilters.district = saved.district || ''
+  localFilters.age_min = typeof saved.age_min === 'number' ? saved.age_min : undefined
+  localFilters.age_max = typeof saved.age_max === 'number' ? saved.age_max : undefined
+  localFilters.budget_min = typeof saved.budget_min === 'number' ? saved.budget_min : undefined
+  localFilters.budget_max = typeof saved.budget_max === 'number' ? saved.budget_max : undefined
+
+  selectedCity.value = cities.find((c) => c.value === localFilters.city)
+  selectedDistrict.value = localFilters.district || ''
+}
+
+onMounted(() => {
+  seedFromStore()
 })
 
 async function apply() {
   const filters: any = {}
-  
-  console.log('Applying filters, localFilters.looking_for_apartment:', localFilters.looking_for_apartment)
-  
+
   if (localFilters.looking_for_apartment === true) {
     filters.looking_for_apartment = true
-    console.log('Adding looking_for_apartment filter: true')
   }
   if (localFilters.city) {
     filters.city = localFilters.city
@@ -330,17 +299,17 @@ async function apply() {
   if (localFilters.budget_max !== undefined && localFilters.budget_max > 0) {
     filters.budget_max = localFilters.budget_max
   }
-  
-  console.log('Final filters to apply:', filters)
-  
-  const { useHeader } = await import('@/stores/ui')
-  const headerStore = useHeader()
+
   headerStore.setFilters(filters)
-  
   emit('close')
 }
 
-async function reset() {
+function cancel() {
+  emit('close')
+}
+
+function resetFilters() {
+  headerStore.clearFilters()
   localFilters.looking_for_apartment = undefined
   localFilters.city = ''
   localFilters.district = ''
@@ -348,16 +317,8 @@ async function reset() {
   localFilters.age_max = undefined
   localFilters.budget_min = undefined
   localFilters.budget_max = undefined
-  
-  selectedCity.value = null
-  selectedDistrict.value = null
-  
-  const { useHeader } = await import('@/stores/ui')
-  const headerStore = useHeader()
-  headerStore.clearFilters()
-}
-
-function cancel() {
+  selectedCity.value = undefined
+  selectedDistrict.value = ''
   emit('close')
 }
 </script>

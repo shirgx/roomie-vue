@@ -1,1 +1,11 @@
+node_modules/
+dist/
+.env
+.env.local
+.env.production
+server.log
+*.log
+app.db-shm
+app.db-wal
+uploads/
 

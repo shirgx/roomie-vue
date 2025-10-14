@@ -1,30 +1,36 @@
 import { api } from './client'
-import { UserProfile } from './user'
+
+export interface UserCard {
+  id: number
+  tg_id: number
+  username?: string
+  full_name?: string
+  photo_url?: string
+  local_photo_path?: string
+  has_apartment?: boolean
+  city?: string
+  district?: string
+  age?: number
+  gender?: string
+  budget_min?: number
+  budget_max?: number
+  bio?: string
+  apartment_description?: string
+  compatibility_percentage?: number
+}
 
 export interface SearchFilters {
   city?: string
   district?: string
-  ageMin?: number
-  ageMax?: number
-  budgetMin?: number
-  budgetMax?: number
   gender?: string
-  hasApartment?: boolean
+  age_min?: number
+  age_max?: number
+  budget_min?: number
+  budget_max?: number
+  looking_for_apartment?: boolean
+  has_apartment?: boolean
 }
 
-export async function searchUsers(filters: SearchFilters): Promise<UserProfile[]> {
-  const params = new URLSearchParams()
-  
-  Object.entries(filters).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
-      params.append(key, String(value))
-    }
-  })
-  
-  const queryString = params.toString()
-  return api.get<UserProfile[]>(`/users/search${queryString ? `?${queryString}` : ''}`)
-}
-
-export async function getPotentialMatches(limit = 10): Promise<UserProfile[]> {
-  return api.get<UserProfile[]>(`/matches/potential?limit=${limit}`)
+export async function findUsers(filters: SearchFilters = {}): Promise<UserCard[]> {
+  return api.post<UserCard[]>('/search/', filters)
 }
