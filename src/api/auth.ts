@@ -30,34 +30,11 @@ export async function authWithTelegram(): Promise<void> {
     }
 
     console.log('No Telegram WebApp detected, using fallback auth...')
-    const existing = localStorage.getItem('tg_id')
-    let fallbackTgId: number
-    if (existing && /^\d+$/.test(existing)) {
-      fallbackTgId = Number(existing)
-    } else {
-      fallbackTgId = Math.floor(1_000_000_000 + Math.random() * 9_000_000_000)
-      localStorage.setItem('tg_id', String(fallbackTgId))
-    }
+    const fallbackTgId = Math.floor(1_000_000_000 + Math.random() * 9_000_000_000)
+    localStorage.setItem('tg_id', String(fallbackTgId))
 
-    try {
-      await api.get('/users/me')
-      console.log('Fallback user exists (tg_id=', fallbackTgId, ')')
-    } catch (error) {
-      console.log('Creating fallback user with tg_id:', fallbackTgId)
-      const mockInitData = `user=${encodeURIComponent(JSON.stringify({
-        id: fallbackTgId,
-        first_name: 'Dev',
-        last_name: 'User', 
-        username: `dev_${fallbackTgId}`,
-        photo_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'
-      }))}&hash=mock_hash_for_dev`
-      try {
-        await api.post('/auth/telegram', { initData: mockInitData })
-        console.log('Fallback user created')
-      } catch (authError) {
-        console.warn('Fallback auth failed:', authError)
-      }
-    }
+    console.log('Fallback tg_id set:', fallbackTgId)
+    // Removed automatic profile creation
     
   } catch (error) {
     console.error('Authentication failed:', error)

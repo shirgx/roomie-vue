@@ -6,10 +6,14 @@
     
     <div class="px-4 py-4 space-y-4">
       <div class="flex items-center space-x-2">
-        <Checkbox 
-          id="apartment" 
-          class="w-5 h-5"
-          v-model:checked="localFilters.looking_for_apartment"
+        <input
+          id="apartment"
+          type="checkbox"
+          v-model="localFilters.looking_for_apartment"
+          :class="[
+            'w-5 h-5 rounded focus:ring-2 focus:ring-ring focus:ring-offset-2 peer',
+            localFilters.looking_for_apartment ? 'border-0' : 'border border-border'
+          ]"
         />
         <Label
             for="apartment"  
@@ -198,7 +202,6 @@ import { Check, Search } from 'lucide-vue-next'
 import { Combobox, ComboboxAnchor, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxItemIndicator, ComboboxList } from '@/components/ui/combobox'
 import { Label } from '@/components/ui/label'
 import { NumberField, NumberFieldContent, NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput } from '@/components/ui/number-field'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { useHeader } from '@/stores/ui'
 
@@ -278,9 +281,8 @@ onMounted(() => {
 async function apply() {
   const filters: any = {}
 
-  if (localFilters.looking_for_apartment === true) {
-    filters.looking_for_apartment = true
-  }
+  filters.looking_for_apartment = localFilters.looking_for_apartment || false
+  
   if (localFilters.city) {
     filters.city = localFilters.city
   }
