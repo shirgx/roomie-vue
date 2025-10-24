@@ -71,11 +71,10 @@ onMounted(async () => {
       console.warn('Telegram WebApp not available in App.vue')
     }
   } catch (e) {
-    console.warn('[TMA] init failed:', e)
+    console.warn('Initialization failed:', e)
   }
 })
 
-// Use background depending on theme
 const { theme } = useTheme()
 const bg = computed(() => `url(${theme.value === 'dark' ? bgDark : bgLight})`)
 

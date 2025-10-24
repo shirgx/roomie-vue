@@ -77,7 +77,6 @@ app.post('/auth/telegram', (req, res) => {
   const initData = String(req.body?.initData || '')
   const botToken = process.env.TELEGRAM_BOT_TOKEN || ''
 
-  // Allow dev mock without requiring a bot token (but never in production)
   if (initData && initData.includes('mock_hash_for_dev') && process.env.NODE_ENV !== 'production') {
     console.log('Development mode: processing mock auth data')
     try {
@@ -274,8 +273,6 @@ app.post('/search/', (req, res) => {
 
   if (f.city) { conds.push('u.city = ?'); params.push(String(f.city)) }
   if (f.district) { conds.push('u.district = ?'); params.push(String(f.district)) }
-  // Removed client-controlled gender filter to prevent overriding same-gender rule
-  // if (f.gender && f.gender !== '') { conds.push('u.gender = ?'); params.push(String(f.gender)) }
   if (Number.isFinite(Number(f.age_min))) { conds.push('u.age >= ?'); params.push(Number(f.age_min)) }
   if (Number.isFinite(Number(f.age_max))) { conds.push('u.age <= ?'); params.push(Number(f.age_max)) }
   if (Number.isFinite(Number(f.budget_min))) { conds.push('(u.budget_min IS NULL OR u.budget_min >= ?)'); params.push(Number(f.budget_min)) }
@@ -865,32 +862,3 @@ function resetToMockUsers() {
   tx()
   return { inserted: MOCK_USERS.length }
 }
-
-import fs from 'node:fs'
-
-app.post('/admin/reset-mocks', (req, res) => {
-  const tgId = getTgId(req)
-  if (!tgId) return res.status(401).json({ error: 'no tg header' })
-  const adminId = parseInt(process.env.ADMIN_TG_ID || '0')
-  if (!adminId || tgId !== adminId) return res.status(403).json({ error: 'admin access required' })
-  
-  try {
-    const upDir = path.resolve('uploads')
-    if (fs.existsSync(upDir)) {
-      for (const f of fs.readdirSync(upDir)) {
-        if (f.startsWith('avatar_')) {
-          try { fs.unlinkSync(path.join(upDir, f)) } catch {}
-        }
-      }
-    }
-  } catch (e) {
-    console.warn('Failed to clean uploads:', e)
-  }
-
-  try {
-    const result = resetToMockUsers()
-    res.json({ status: 'ok', ...result })
-  } catch (e: any) {
-    res.status(500).json({ error: e?.message || 'failed' })
-  }
-})

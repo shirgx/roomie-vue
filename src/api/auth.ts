@@ -34,8 +34,6 @@ export async function authWithTelegram(): Promise<void> {
     localStorage.setItem('tg_id', String(fallbackTgId))
 
     console.log('Fallback tg_id set:', fallbackTgId)
-    // Removed automatic profile creation
-    
   } catch (error) {
     console.error('Authentication failed:', error)
     throw error

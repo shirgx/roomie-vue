@@ -2,7 +2,6 @@ import Database from 'better-sqlite3'
 
 const db = new Database('app.db')
 
-// Получаем всех пользователей
 const mockUsers = db.prepare(`SELECT id, full_name FROM users ORDER BY id`).all()
 const questions = db.prepare('SELECT id FROM test_questions ORDER BY id').all().map(q => q.id)
 
@@ -13,7 +12,6 @@ if (questions.length === 0) {
 
 console.log(`Найдено ${mockUsers.length} пользователей и ${questions.length} вопросов`)
 
-// Расширенные профили личности для разнообразия ответов
 const personalityProfiles = [
   [4,1,4,2,4,4,3,2,4,1], // Экстраверт, организованный, открытый
   [2,2,3,1,2,3,1,4,2,1], // Интроверт, добрый, эмоциональный
@@ -37,25 +35,20 @@ const personalityProfiles = [
   [2,1,2,2,4,2,2,2,3,1], // Интроверт, открытый к опыту
 ]
 
-// Функция для генерации случайного профиля на основе базовых
 function generateRandomProfile() {
   const baseProfile = personalityProfiles[Math.floor(Math.random() * personalityProfiles.length)]
   return baseProfile.map(answer => {
-    // Добавляем небольшую вариативность (±1, но в пределах 0-4)
     const variation = Math.floor(Math.random() * 3) - 1 // -1, 0, или 1
     return Math.max(0, Math.min(4, answer + variation))
   })
 }
 
-// Очищаем существующие ответы
 db.prepare('DELETE FROM test_answers').run()
 
-// Добавляем ответы для каждого пользователя
 const insertAnswer = db.prepare('INSERT OR REPLACE INTO test_answers (user_id, question_id, answer_index) VALUES (?, ?, ?)')
 
 const transaction = db.transaction(() => {
   mockUsers.forEach((user, userIndex) => {
-    // Генерируем уникальный профиль для каждого пользователя
     const profile = generateRandomProfile()
     
     questions.forEach((questionId, questionIndex) => {
@@ -74,7 +67,6 @@ try {
   console.error('Ошибка при добавлении ответов:', error)
 }
 
-// Проверяем результат
 const totalAnswers = db.prepare('SELECT COUNT(*) as count FROM test_answers').get()
 console.log(`Всего ответов в базе: ${totalAnswers.count}`)
 

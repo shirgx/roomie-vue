@@ -33,11 +33,11 @@ onMounted(() => {
 })
 
 const headerPadding = computed(() => {
-  if (isExpanded.value) {
-    return 'calc(var(--tg-safe-top, env(safe-area-inset-top)) + 60px)'
-  } else {
-    return 'calc(var(--tg-safe-top, env(safe-area-inset-top)) + 16px)'
-  }
+  const basePadding = isExpanded.value ? 60 : 16
+  const safeInset = 'var(--tg-safe-top, env(safe-area-inset-top))'
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+  const extraIOS = isIOS ? 20 : 0 
+  return `calc(${safeInset} + ${basePadding + extraIOS}px)`
 })
 
 function go(path: string) {

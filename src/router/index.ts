@@ -23,15 +23,12 @@ export const router = createRouter({
   routes,
 })
 
-// Simple guard: prevent access to the app until basic profile fields are filled.
-// Allowed paths (white-list): /profile, /settings, /admin (so user can edit/create profile)
 const WHITELIST = ['/profile', '/settings', '/admin']
 
 router.beforeEach(async (to) => {
   try {
     if (WHITELIST.includes(to.path)) return true
 
-    // fetch current user (server will return the user by tg_id header)
     const user: any = await api.get('/users/me')
 
     const hasFullName = user?.full_name && String(user.full_name).trim().length > 0
@@ -46,7 +43,6 @@ router.beforeEach(async (to) => {
 
     return true
   } catch (err) {
-    // If API fails (no user yet), redirect to profile to create it.
     return { path: '/profile' }
   }
 })

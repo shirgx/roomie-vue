@@ -57,7 +57,7 @@
     
     <div class="absolute inset-x-0 bottom-0 p-4 pb-5 space-y-2">
       <div class="text-white text-xl font-semibold drop-shadow-sm">
-        {{ displayName }}{{ userAge ? `, ${userAge}` : '' }}{{ userCity ? ` • ${userCity}` : '' }}
+        {{ displayName }}{{ userAge ? `, ${userAge}` : '' }}{{ userCity ? ` • ${userCity}` : '' }} • @{{userUsername}}
       </div>
       <div class="text-white/90 text-sm drop-shadow-sm line-clamp-2">
         {{ userBio || 'Нет описания' }}
@@ -77,7 +77,7 @@
             class="justify-self-start [&>svg]:!h-8 [&>svg]:!w-8 bg-white"
             aria-label="Dislike"
         >
-          <HeartOff class="text-black"/>
+          <X class="text-black"/>
         </Button>
 
         <div class="justify-self-center">
@@ -95,7 +95,7 @@
             class="justify-self-end [&>svg]:!h-8 [&>svg]:!w-8 bg-white"
             aria-label="Like"
         >
-          <Heart class="text-black"/>
+          <ChevronRight class="text-black"/>
         </Button>
       </div>
     </div>
@@ -114,7 +114,7 @@ import { computed, ref, watch, onMounted } from 'vue'
 import type { UserCard } from '@/api/search'
 import placeholder from '@/assets/images/avatar-placeholder.jpeg'
 import { Button } from "@/components/ui/button"
-import { Heart, HeartOff, Info } from 'lucide-vue-next'
+import { ChevronRight, X, Info } from 'lucide-vue-next'
 import { API_URL } from '@/api/client' 
 import UserDetailModal from './UserDetailModal.vue'
 
@@ -135,6 +135,7 @@ const displayName = computed(() => props.user?.full_name || props.user?.username
 const userAge = computed(() => props.user?.age)
 const userCity = computed(() => props.user?.city)
 const userBio = computed(() => props.user?.bio)
+const userUsername = computed(() => props.user?.username)
 
 const photoSrc = computed(() => {
   if (!props.user) return placeholder

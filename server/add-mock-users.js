@@ -48,14 +48,11 @@ CREATE TABLE IF NOT EXISTS test_answers (
 );
 `)
 
-// Ensure `apartment_description` column exists (SQLite doesn't support IF NOT EXISTS for ADD COLUMN)
 try {
   db.exec('ALTER TABLE users ADD COLUMN apartment_description TEXT')
 } catch (err) {
-  // ignore if column already exists
 }
 
-// Коллекция фотографий для женщин
 const femalePhotos = [
   'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=400&h=400&fit=crop&crop=face',
   'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face',
@@ -89,7 +86,6 @@ const femalePhotos = [
   'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=400&h=400&fit=crop&crop=face'
 ]
 
-// Коллекция фотографий для мужчин
 const malePhotos = [
   'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face',
   'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face',
@@ -123,13 +119,11 @@ const malePhotos = [
   'https://images.unsplash.com/photo-1636041293178-808a6762ab39?w=400&h=400&fit=crop&crop=face'
 ]
 
-// Функция для получения случайной фотографии по полу
 function getRandomPhotoByGender(gender, usedPhotos = new Set()) {
   const photos = gender === 'female' ? femalePhotos : malePhotos
   const availablePhotos = photos.filter(photo => !usedPhotos.has(photo))
   
   if (availablePhotos.length === 0) {
-    // Если все фотографии использованы, берем случайную из всех
     return photos[Math.floor(Math.random() * photos.length)]
   }
   
@@ -138,8 +132,6 @@ function getRandomPhotoByGender(gender, usedPhotos = new Set()) {
   return selectedPhoto
 }
 
-// New mock users: only from Казань, Уфа, Челябинск, Москва, Екатеринбург
-// Kazan users will have district set (various districts). Budgets are multiples of 500.
 function randMultipleOf(step, min, max) {
   const steps = Math.floor((max - min) / step) + 1
   return min + Math.floor(Math.random() * steps) * step
@@ -150,9 +142,7 @@ const kazanDistrictsForMock = ['Вахитовский','Авиастроите�
 const mockUsers = []
 let nextTg = 1001
 
-// helper to push user
 function addUser({username, full_name, city, district = '', age = 24, gender = 'female', has_apartment = 0, bio = '', apartment_description = null, budget_min = null, budget_max = null}){
-  // budgets: if null and user has no apartment -> pick random multiples of 500; if has_apartment -> 0
   if (has_apartment) {
     budget_min = 0
     budget_max = 0
@@ -177,10 +167,8 @@ function addUser({username, full_name, city, district = '', age = 24, gender = '
   })
 }
 
-// Make a balanced set: per city create several users; Kazan users use different districts
 const citiesForMocks = ['Казань','Уфа','Челябинск','Москва','Екатеринбург']
 
-// Add explicit varied users
 addUser({username: 'anna_kzn', full_name: 'Анна Казанова', city: 'Казань', district: 'Вахитовский', age: 23, gender: 'female', has_apartment: 0, budget_min: 1500*10, budget_max: 2500*10})
 addUser({username: 'dmitriy_kzn', full_name: 'Дмитрий Казанцев', city: 'Казань', district: 'Ново-Савиновский', age: 28, gender: 'male', has_apartment: 1, apartment_description: 'Двухкомнатная квартира в новостройке'})
 addUser({username: 'maria_kzn', full_name: 'Мария Петрова', city: 'Казань', district: 'Советский', age: 21, gender: 'female', has_apartment: 0, budget_min: 12000, budget_max: 18000})
@@ -220,7 +208,6 @@ addUser({username: 'irina_kazan', full_name: 'Ирина Соколова', city
 addUser({username: 'ekaterina_kazan', full_name: 'Екатерина Лебедева', city: 'Казань', district: 'Авиастроительный', age: 26, gender: 'female', has_apartment: 0})
 addUser({username: 'yuliya_kazan', full_name: 'Юлия Козлова', city: 'Казань', district: 'Кировский', age: 24, gender: 'female', has_apartment: 1, apartment_description: 'Комната в квартире'})
 addUser({username: 'kristina_msc', full_name: 'Кристина Дизайнер', city: 'Москва', age: 24, gender: 'female', has_apartment: 0, budget_min: 22000, budget_max: 33000})
-// Generate some additional mixed users to reach ~40 entries
 const additionalNames = [
   { name: 'Вадим Сантехников', gender: 'male', username: 'vadim_plumb' },
   { name: 'Ирина Пилотова', gender: 'female', username: 'irina_pilot' },
@@ -253,7 +240,6 @@ const additionalNames = [
 const cities = ['Казань','Уфа','Челябинск','Москва','Екатеринбург']
 const districts = kazanDistrictsForMock
 
-// Добавляем дополнительных пользователей
 additionalNames.forEach((person, index) => {
   const tgId = nextTg++
   const city = cities[Math.floor(Math.random() * cities.length)]
@@ -284,11 +270,9 @@ additionalNames.forEach((person, index) => {
 
 console.log(`Подготовлено ${mockUsers.length} пользователей для добавления в базу данных`)
 
-// Отслеживаем использованные фотографии
 const usedFemalePhotos = new Set()
 const usedMalePhotos = new Set()
 
-// Добавляем фотографии к каждому пользователю
 mockUsers.forEach(user => {
   if (user.gender === 'female') {
     user.photo_url = getRandomPhotoByGender('female', usedFemalePhotos)
@@ -297,10 +281,8 @@ mockUsers.forEach(user => {
   }
 })
 
-// Очищаем таблицу пользователей
 db.prepare('DELETE FROM users WHERE tg_id >= 1001').run()
 
-// Добавляем пользователей
 const insertUser = db.prepare(`
   INSERT INTO users (
     tg_id, username, full_name, photo_url, has_apartment, city, district, 

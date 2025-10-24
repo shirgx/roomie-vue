@@ -1,6 +1,5 @@
 <template>
   <div class="p-4 space-y-4">
-    <!-- Banner: show when profile is incomplete (matches TestCard outer style, button at bottom) -->
     <div v-if="profileIncomplete" class="flex-col justify-center relative border p-4 rounded shadow overflow-hidden backdrop-blur-lg">
       <div class="flex flex-col">
         <div>
